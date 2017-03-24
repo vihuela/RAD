@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        publishNonDefault true//solve BuildConfig.DEBUG always false
+    }
+    dataBinding {
+        enabled = true;
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:support-v4:25.3.0'
+    compile 'com.android.support:design:25.3.0'
+    compile 'com.android.support:recyclerview-v7:25.3.0'
+    compile 'com.android.support:support-annotations:25.3.0'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.1'
+    //log
+    compile 'com.orhanobut:logger:1.15'//https://github.com/orhanobut/logger
+    //utils
+    compile 'com.blankj:utilcode:1.3.6'//https://github.com/Blankj/AndroidUtilCode
+    compile 'com.jaeger.statusbaruitl:library:1.3.6'//https://github.com/laobie/StatusBarUtil
+    compile 'cn.bingoogolapple:bga-swipebacklayout:1.0.8@aar'//https://github.com/bingoogolapple/BGASwipeBackLayout-Android
+    //adapter
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.0'//https://github.com/CymChad/BaseRecyclerViewAdapterHelper
+    compile ('com.alibaba.android:vlayout:1.0.2@aar') { transitive = true }//https://github.com/alibaba/vlayout
+    //tab
+    compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'//https://github.com/H07000223/FlycoTabLayout/blob/master/README_CN.md
+    //net（have rx1）
+    compile 'com.ricky:oknet:1.2.3'
+    //db（have rx1）
+    compile 'com.pushtorefresh.storio:sqlite:1.12.3'//https://github.com/pushtorefresh/storio
+    //aop
+    compile 'org.aspectj:aspectjrt:1.8.10'
+    //debug
+    compile 'com.facebook.stetho:stetho:1.1.1'
+    compile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
+}

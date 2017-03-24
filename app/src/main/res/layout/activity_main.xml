@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tl="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--data节点有没有都可以，有的话，可以在布局中使用databinding语法，没有仅作为替代butterKnight-->
+    <!--<data>-->
+
+    <!--<variable-->
+    <!--name="viewModel"-->
+    <!--type="worldgo.rad.vm.MainActivityVM" />-->
+    <!--</data>-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="worldgo.rad.ui.MainActivity">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/mViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.flyco.tablayout.CommonTabLayout
+            android:id="@+id/mTab"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#ffffff"
+            tl:tl_iconGravity="LEFT"
+            tl:tl_iconHeight="18dp"
+            tl:tl_iconMargin="5dp"
+            tl:tl_iconWidth="18dp"
+            tl:tl_indicator_bounce_enable="true"
+            tl:tl_indicator_color="#FA7C20"
+            tl:tl_indicator_gravity="TOP"
+            tl:tl_textSelectColor="#FA7C20"
+            tl:tl_textUnselectColor="#66000000"
+            tl:tl_textsize="15sp"
+            tl:tl_underline_color="#DDDDDD"
+            tl:tl_underline_gravity="TOP"
+            tl:tl_underline_height="1dp" />
+
+    </LinearLayout>
+</layout>

@@ -1,0 +1,38 @@
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.hujiang.android-aspectjx'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "worldgo.rad"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true;
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    //leakcanary
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
+    //common
+    releaseCompile project(path: ':common', configuration: 'release')
+    debugCompile project(path: ':common', configuration: 'debug')
+}
