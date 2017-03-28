@@ -1,4 +1,5 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:rl="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -12,11 +13,12 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
-        <Button
-            android:id="@+id/btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{viewModel.title}" />
+
+        <worldgo.common.viewmodel.refresh.RefreshListView
+            android:id="@+id/mRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            rl:rl_refresh_type="RefreshAndLoadMore" />
 
 
     </LinearLayout>

@@ -29,8 +29,8 @@ public class RadApp extends BaseApplication {
         refWatcher = LeakCanary.install(this);
         //net
         OkGo.getInstance()
-                .baseUrl("http://server.jeasonlzy.com/OkHttpUtils/")
-                .debug("OKNet", Level.INFO, isDebug());
+                .baseUrl("http://gank.io/api/data/")
+                .debug("rad", Level.INFO, isDebug());
         //chrome debug [chrome://inspect/#devices]
         if (isDebug()) {
             Stetho.initialize(

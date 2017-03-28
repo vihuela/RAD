@@ -1,6 +1,6 @@
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.hujiang.android-aspectjx'
+/*apply plugin: 'com.hujiang.android-aspectjx'*/
 
 android {
     compileSdkVersion 25

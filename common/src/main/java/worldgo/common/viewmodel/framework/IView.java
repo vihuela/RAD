@@ -3,6 +3,7 @@ package worldgo.common.viewmodel.framework;
 import android.app.Activity;
 import android.support.annotation.Nullable;
 
+import worldgo.common.viewmodel.framework.base.view.BaseView;
 import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
 
 
@@ -11,7 +12,7 @@ import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
  * You don't need to implement it yourself - use {@link worldgo.common.viewmodel.framework.base.ViewModelBaseActivity} and
  * {@link worldgo.common.viewmodel.framework.base.ViewModelBaseFragment} instead.
  */
-public interface IView {
+public interface IView extends BaseView{
     /**
      * This method is used for Data Binding to bind correct layout and variable automatically
      * Can return null value in case that Data Binding is not used.
