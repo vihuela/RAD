@@ -5,27 +5,23 @@ import android.databinding.ObservableField;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
 
 import com.blankj.utilcode.utils.ToastUtils;
 
 import ricky.oknet.lifecycle.INetQueue;
 import ricky.oknet.utils.Error;
 import worldgo.common.viewmodel.aop.anno.Permission;
-import worldgo.common.viewmodel.util.CommonUtils;
-import worldgo.rad.base.refresh.IRefreshView;
+import worldgo.common.viewmodel.refresh.RefreshListView;
 import worldgo.rad.databinding.FragmentPagerItemBinding;
-import worldgo.rad.request.Api;
 import worldgo.rad.request.call.JsonCallback;
 import worldgo.rad.request.entity.ImageListRequest;
 import worldgo.rad.ui.PagerItemFragment;
-import worldgo.rad.viewImpl.IPagerItemView;
 
 /**
  * @author ricky.yao on 2017/3/23.
  */
 
-public class PagerItemVM extends AbsVM<IRefreshView> {
+public class PagerItemVM extends AbsVM<RefreshListView.IRefreshView> {
     //双向绑定
     public final ObservableField<String> title = new ObservableField<>();
 
@@ -35,7 +31,7 @@ public class PagerItemVM extends AbsVM<IRefreshView> {
     }
 
     @Override
-    public void onBindView(@NonNull IRefreshView view) {
+    public void onBindView(@NonNull RefreshListView.IRefreshView view) {
         super.onBindView(view);
         if (view instanceof PagerItemFragment) {
             PagerItemFragment pagerItemFragment = (PagerItemFragment) view;
@@ -62,16 +58,18 @@ public class PagerItemVM extends AbsVM<IRefreshView> {
             @Override
             public void success(ImageListRequest.Res res, boolean fromCache) {
                 //获取总页数
-                getView().setTotalPage(3);
-
-                getView().setData(res.results,loadMore);
+                if (getView() != null) {
+                    getView().setTotalPage(30);
+                    getView().setData(res.results, loadMore);
+                }
             }
 
             @Override
             public void error(Error error, String message) {
                 super.error(error, message);
+                getView().setMessage(error, message);
             }
-        },iNetQueue);
+        }, iNetQueue);
     }
 
 }

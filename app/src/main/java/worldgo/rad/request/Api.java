@@ -11,7 +11,7 @@ import worldgo.rad.request.entity.ImageListRequest;
 
 public interface Api {
 
-    int LIST_SIZE = 20;
+    int LIST_SIZE = 10;
 
     @GET("福利/{size}/{page}")
     Net<ImageListRequest.Res> getImageList(@Path("size") int size, @Path("page") int page);

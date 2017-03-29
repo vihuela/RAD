@@ -18,15 +18,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
+import ricky.oknet.utils.Error;
 import worldgo.common.R;
 import worldgo.common.viewmodel.framework.base.view.BaseRefreshView;
+import worldgo.common.viewmodel.framework.base.view.BaseView;
 import worldgo.common.viewmodel.refresh.util.CustomLoadMoreView;
 
 public class RefreshListView extends LinearLayout {
+    public final static int DEFAULT_SIZE = 10;
     public final static int Refresh = 0;
     public final static int LoadMore = 1;
     public final static int Refresh_LoadMore = 2;
-    public final static int DEFAULT_SIZE = 10;
     private final Handler mHandler;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -38,8 +40,9 @@ public class RefreshListView extends LinearLayout {
     private int totalPage = -1;//加载总页数
     private int pageStartOffset = 0;//起始页
     private int currentPage = pageStartOffset;//当前加载页
+    private BaseView mBaseView;//与外部对接View的切换
     @Type
-    private int mRefreshType;
+    private int mRefreshType = Refresh;
 
     public RefreshListView(Context context) {
         this(context, null);
@@ -62,26 +65,16 @@ public class RefreshListView extends LinearLayout {
 
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        initLogic(true);
-    }
-
-    private void initLogic(boolean init) {
+    private void initLogic() {
         switch (mRefreshType) {
             case Refresh:
-                if (init) {
-                    requireRefresh();
-                }
+                requireRefresh();
                 break;
             case LoadMore:
                 requireLoadMore();
                 break;
             case Refresh_LoadMore:
-                if (init) {
-                    requireRefresh();
-                }
+                requireRefresh();
                 requireLoadMore();
                 break;
         }
@@ -101,7 +94,7 @@ public class RefreshListView extends LinearLayout {
                         } else {
                             mAdapter.loadMoreEnd();
                         }
-                    }else{
+                    } else {
                         mAdapter.loadMoreComplete();
                     }
                 }
@@ -142,72 +135,80 @@ public class RefreshListView extends LinearLayout {
     }
 
     /**
-     * ---------------------------------------------------------------------------------------------
+     * --------------------------------------Setter----------------------------------------------------
      */
 
     /**
-     * 加载总页数，通常由接口获取，若没有可传0
+     * 起始加载偏移页
      */
-    public void setTotalPage(int totalPage) {
-        this.totalPage = totalPage;
-
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    /**
-     * 每次加载条目数，与保持接口一致!
-     */
-    public RefreshListView setSize(int size) {
-        this.size = size;
-        return this;
-    }
-
-    public int getPageStartOffset() {
-        return pageStartOffset;
-    }
-
     public RefreshListView setPageStartOffset(int start) {
         this.pageStartOffset = start;
         return this;
     }
 
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setRefreshListener(IRefreshListener mIRefreshListener) {
-        this.mIRefreshListener = mIRefreshListener;
-    }
-
-    public RecyclerView getRecyclerView() {
-        return mRecyclerView;
-    }
-
-    public RefreshLayout getRefreshLayout() {
-        return mRefreshLayout;
-    }
-
-    public void setAdapter(BaseQuickAdapter mAdapter) {
-        this.mAdapter = mAdapter;
-        initLogic(false);
-        mRecyclerView.setAdapter(mAdapter);
+    /**
+     * 刷新View的类型
+     */
+    public RefreshListView setViewType(@Type int type) {
+        this.mRefreshType = type;
+        return this;
     }
 
     /**
-     * 刷新View的类型
-     *
-     * @param type
+     * 设置回调
      */
-    public void setRefreshType(@Type int type) {
-        this.mRefreshType = type;
-
+    public RefreshListView setListener(IRefreshListener mIRefreshListener) {
+        this.mIRefreshListener = mIRefreshListener;
+        return this;
     }
 
+    /**
+     * 每次加载条目数，与保持接口一致!
+     */
+    public RefreshListView setPageSize(int size) {
+        this.size = size;
+        return this;
+    }
+
+    /**
+     * 设置接口类,让此类负责外部状态
+     */
+    public RefreshListView setBaseView(BaseView baseView){
+        this.mBaseView = baseView;
+        return this;
+    }
+
+    /**
+     * 设置适配器
+     */
+    public void setAdapter(BaseQuickAdapter mAdapter) {
+        this.mAdapter = mAdapter;
+        initLogic();
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+
+    /**
+     * 加载总页数，通常由接口获取，若没有可传0（请求发送后）
+     */
+    public void setPageTotal(int totalPage) {
+        this.totalPage = totalPage;
+    }
+
+    /**
+     * 设置数据源（请求发送后）
+     */
     public void setData(List beanList, boolean loadMore) {
-        if (beanList == null || beanList.size() == 0) return;
+        if (beanList == null || beanList.size() == 0) {
+            //初次加载为空
+            if(mAdapter.getItemCount()==0 && mBaseView!=null) {
+                mBaseView.showEmpty();
+            }
+            return;
+        }
+        if(mBaseView != null) {
+            mBaseView.showContent();
+        }
         //refresh
         if (!loadMore) {
             mAdapter.setNewData(beanList);
@@ -218,16 +219,12 @@ public class RefreshListView extends LinearLayout {
             //没有传递totalPage，（验证发生在下次加载时）
             if (totalPage == -1 || totalPage == 0) {
                 boolean valid = beanList.size() >= size;
-
+                mAdapter.addData(beanList);
+                currentPage++;
+                setLoadMore(valid);
                 if (valid) {
-                    setLoadMore(true);
-                    mAdapter.addData(beanList);
-                    currentPage++;
                     mAdapter.loadMoreComplete();
                 } else {
-                    setLoadMore(false);
-                    mAdapter.addData(beanList);
-                    currentPage++;
                     mAdapter.loadMoreEnd();
                 }
                 return;
@@ -245,15 +242,54 @@ public class RefreshListView extends LinearLayout {
         }
     }
 
+    public void setMessage(Error error, String content){
+        if(mAdapter.getItemCount() == 0){
+            if(mBaseView!=null) mBaseView.showNetError(error, content);
+        }
+        else{
+            if(mBaseView!=null) {
+                //错误是由 刷新 还是 加载更多 引发的
+                if(mRefreshLayout.getCurrentRefreshStatus()!= RefreshLayout.RefreshStatus.IDLE){
+                    mRefreshLayout.endRefreshing();
+                    mBaseView.showMessage(content);
+                }
+                else{
+                    mAdapter.loadMoreFail();
+                }
+            }
+        }
+    }
 
-    /**
-     * ---------------------------------------------------------------------------------------------
-     */
+
+/**---------------------------------------------getter---------------------------------------------*/
+
+    public int getPageStartOffset() {
+        return pageStartOffset;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
+    }
+
+    public RefreshLayout getRefreshLayout() {
+        return mRefreshLayout;
+    }
+
+
+    /**---------------------------------------------interface---------------------------------------------*/
 
     public static interface IRefreshListener {
         void onRefresh(RefreshLayout refreshLayout);
 
-        void onLoadMore(int loadPage);
+        void onLoadMore(int targetPage);
     }
 
     @IntDef(value = {Refresh, LoadMore, Refresh_LoadMore})
@@ -261,7 +297,7 @@ public class RefreshListView extends LinearLayout {
     @interface Type {
     }
 
-    public static interface IRefreshView<BEAN> extends BaseRefreshView<BEAN> {
+    public  interface IRefreshView<BEAN> extends BaseRefreshView<BEAN> {
 
     }
 }

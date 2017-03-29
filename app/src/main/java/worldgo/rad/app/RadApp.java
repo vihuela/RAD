@@ -31,8 +31,9 @@ public class RadApp extends BaseApplication {
         OkGo.getInstance()
                 .baseUrl("http://gank.io/api/data/")
                 .debug("rad", Level.INFO, isDebug());
-        //chrome debug [chrome://inspect/#devices]
+
         if (isDebug()) {
+            //chrome debug [chrome://inspect/#devices]
             Stetho.initialize(
                     Stetho.newInitializerBuilder(this)
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
@@ -40,7 +41,6 @@ public class RadApp extends BaseApplication {
                             .build());
             OkGo.getInstance().getOkHttpClientBuilder().addNetworkInterceptor(new StethoInterceptor());
         }
-
     }
 
     @Override

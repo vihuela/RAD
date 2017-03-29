@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2016. WorldGo Technology Co., Ltd
+  ~ DO NOT DIVULGE
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:id="@+id/error_img"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            tools:src="@mipmap/ic_error_view" />
+
+        <TextView
+            android:id="@+id/error_tips_show"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:lineSpacingExtra="5dp"
+            android:textColor="#626262"
+            android:textSize="18sp"
+            tools:text="别闹，快管一管你家网络，我都没办法给你看更多精彩内容了。" />
+
+        <ImageView
+            android:id="@+id/vv_error_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@mipmap/ic_net_error" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="点击刷新"
+            android:textColor="#626262" />
+
+    </LinearLayout>
+</FrameLayout>

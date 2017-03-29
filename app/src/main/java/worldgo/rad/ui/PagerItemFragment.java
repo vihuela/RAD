@@ -3,6 +3,7 @@ package worldgo.rad.ui;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ricky.oknet.utils.Error;
 import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
 import worldgo.common.viewmodel.refresh.RefreshLayout;
 import worldgo.common.viewmodel.refresh.RefreshListView;
@@ -21,7 +23,6 @@ import worldgo.common.viewmodel.util.CommonUtils;
 import worldgo.common.viewmodel.util.decoration.GridItemDecoration;
 import worldgo.rad.R;
 import worldgo.rad.base.BaseBindingFragment;
-import worldgo.rad.base.refresh.IRefreshView;
 import worldgo.rad.databinding.FragmentPagerItemBinding;
 import worldgo.rad.request.Api;
 import worldgo.rad.request.entity.ImageListRequest;
@@ -31,7 +32,7 @@ import worldgo.rad.vm.PagerItemVM;
  * @author ricky.yao on 2017/3/23.
  */
 
-public class PagerItemFragment extends BaseBindingFragment<IRefreshView, PagerItemVM, FragmentPagerItemBinding> implements IRefreshView {
+public class PagerItemFragment extends BaseBindingFragment<RefreshListView.IRefreshView, PagerItemVM, FragmentPagerItemBinding> implements RefreshListView.IRefreshView<ImageListRequest.Res.Item> {
     private static List mHeights = new ArrayList();
 
     static {
@@ -39,7 +40,6 @@ public class PagerItemFragment extends BaseBindingFragment<IRefreshView, PagerIt
     }
 
     public String mTitle;
-    private BaseQuickAdapter<ImageListRequest.Res.Item, BaseViewHolder> mAdapter;
 
     public static PagerItemFragment getInstance(String title) {
         PagerItemFragment sf = new PagerItemFragment();
@@ -47,6 +47,16 @@ public class PagerItemFragment extends BaseBindingFragment<IRefreshView, PagerIt
         args.putString("title", title);
         sf.setArguments(args);
         return sf;
+    }
+
+    @Override
+    protected View setStatusTargetView() {
+        return mBinding.mRefreshLayout;
+    }
+
+    @Override
+    public void setOnRetryListener() {
+        onRefreshData();
     }
 
     @Override
@@ -58,20 +68,9 @@ public class PagerItemFragment extends BaseBindingFragment<IRefreshView, PagerIt
     public void onCreateView(@Nullable Bundle savedInstanceState) {
         mTitle = getArguments().getString("title");
 
-        mBinding.mRefreshLayout.setRefreshListener(new RefreshListView.IRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                getViewModel().getImageList(mBinding.mRefreshLayout.getSize(),mBinding.mRefreshLayout.getPageStartOffset(), mNetQueue,false);
-            }
-
-            @Override
-            public void onLoadMore(int nextPage) {
-                getViewModel().getImageList(mBinding.mRefreshLayout.getSize(),nextPage, mNetQueue,true);
-            }
-        });
         mBinding.mRefreshLayout.getRecyclerView().setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         mBinding.mRefreshLayout.getRecyclerView().addItemDecoration(new GridItemDecoration(2, SizeUtils.dp2px(5), false));
-        mAdapter = new BaseQuickAdapter<ImageListRequest.Res.Item, BaseViewHolder>(R.layout.image_item) {
+        BaseQuickAdapter<ImageListRequest.Res.Item, BaseViewHolder> mAdapter = new BaseQuickAdapter<ImageListRequest.Res.Item, BaseViewHolder>(R.layout.image_item) {
 
 
             @Override
@@ -87,26 +86,49 @@ public class PagerItemFragment extends BaseBindingFragment<IRefreshView, PagerIt
             }
         };
         mBinding.mRefreshLayout
-                .setPageStartOffset(5)
-                .setSize(Api.LIST_SIZE);
-        mBinding.mRefreshLayout.setAdapter(mAdapter);
+                .setBaseView(this)
+                .setPageStartOffset(0)
+                .setPageSize(Api.LIST_SIZE)
+                .setViewType(RefreshListView.Refresh_LoadMore)
+                .setListener(new RefreshListView.IRefreshListener() {
+                    @Override
+                    public void onRefresh(RefreshLayout refreshLayout) {
+                        onRefreshData();
+                    }
+
+                    @Override
+                    public void onLoadMore(int targetPage) {
+                        getViewModel().getImageList(mBinding.mRefreshLayout.getSize(), targetPage, mNetQueue, true);
+                    }
+                })
+                .setAdapter(mAdapter);
     }
 
 
     @Override
     protected void onFirstUserVisible() {
-        getViewModel().getImageList(mBinding.mRefreshLayout.getSize(),mBinding.mRefreshLayout.getPageStartOffset(), mNetQueue,false);
+        showLoading();
+        onRefreshData();
     }
-
 
 
     @Override
     public void setTotalPage(int totalPage) {
-        /*mBinding.mRefreshLayout.setTotalPage(totalPage);*/
+        mBinding.mRefreshLayout.setPageTotal(totalPage);
     }
 
     @Override
-    public void setData(List list, boolean loadMore) {
-        mBinding.mRefreshLayout.setData(list, loadMore);
+    public void setData(List<ImageListRequest.Res.Item> items, boolean loadMore) {
+        mBinding.mRefreshLayout.setData(items, loadMore);
+    }
+
+    @Override
+    public void setMessage(Error error, String content) {
+        mBinding.mRefreshLayout.setMessage(error, content);
+    }
+
+    @Override
+    public void onRefreshData() {
+        getViewModel().getImageList(mBinding.mRefreshLayout.getSize(), mBinding.mRefreshLayout.getPageStartOffset(), mNetQueue, false);
     }
 }

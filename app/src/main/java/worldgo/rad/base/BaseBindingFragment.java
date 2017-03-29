@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blankj.utilcode.utils.ToastUtils;
 import com.squareup.leakcanary.RefWatcher;
 
 import ricky.oknet.lifecycle.INetQueue;
@@ -17,24 +18,27 @@ import worldgo.common.viewmodel.framework.AbstractViewModel;
 import worldgo.common.viewmodel.framework.IView;
 import worldgo.common.viewmodel.framework.binding.ViewModelBaseBindingFragment;
 import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
+import worldgo.common.viewmodel.varyview.VaryViewHelper;
 import worldgo.rad.app.RadApp;
+import worldgo.rad.util.DefaultVaryViewSetter;
 
 /**
  * @author ricky.yao on 2017/3/23.
- * xml新增组件refresh All Gradle projects即可识别
+ *         xml新增组件refresh All Gradle projects即可识别
  */
 
 public abstract class BaseBindingFragment<T extends IView, R extends AbstractViewModel<T>, B extends ViewDataBinding> extends ViewModelBaseBindingFragment<T, R, B> {
 
+    //net queue
+    public INetQueue mNetQueue;
     protected Context mContext;
     protected B mBinding;
     protected View mView;
+    protected VaryViewHelper mVaryViewHelper;
     private boolean isFirstResume = true;
     private boolean isFirstVisible = true;
     private boolean isFirstInvisible = true;
     private boolean isPrepared;
-    //net queue
-    public INetQueue mNetQueue;
 
     @Nullable
     @Override
@@ -43,9 +47,42 @@ public abstract class BaseBindingFragment<T extends IView, R extends AbstractVie
         mBinding = getBinding();
         mNetQueue = new NetQueue();
 
+        setupVaryView();
         onCreateView(savedInstanceState);
         setModelView((T) this);
         return mView;
+    }
+
+    private void setupVaryView() {
+        if (setStatusTargetView() != null) {//无效请给setStatusTargetView()套一层FrameLayout
+            mVaryViewHelper = new VaryViewHelper.Builder()
+                    .setDataView(setStatusTargetView())
+                    .setLoadingView(LayoutInflater.from(mContext).inflate(worldgo.common.R.layout.vary_view_loadingview, null))
+                    .setEmptyView(LayoutInflater.from(mContext).inflate(worldgo.common.R.layout.vary_view_emptyview, null))
+                    .setErrorView(LayoutInflater.from(mContext).inflate(worldgo.common.R.layout.vary_view_errorview, null))
+                    .setRefreshListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            setOnRetryListener();
+                        }
+                    })
+                    .build();
+            mVaryViewHelper.setViewSetter(new DefaultVaryViewSetter());
+        }
+    }
+
+    /**
+     * 切换状态（可选覆盖）
+     */
+    protected View setStatusTargetView() {
+        return null;
+    }
+
+    /**
+     * VaryView中点击重试回调（可选覆盖）
+     */
+    protected void setOnRetryListener() {
+
     }
 
     public abstract ViewModelBindingConfig getViewModelBindingConfig();
@@ -130,7 +167,6 @@ public abstract class BaseBindingFragment<T extends IView, R extends AbstractVie
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         // watch for memory leaks
         RefWatcher refWatcher = RadApp.getRefWatcher(getActivity());
         refWatcher.watch(this);
@@ -140,15 +176,31 @@ public abstract class BaseBindingFragment<T extends IView, R extends AbstractVie
     public void onDestroyView() {
         super.onDestroyView();
         mNetQueue.cancel();
+        if (mVaryViewHelper != null) mVaryViewHelper.releaseVaryView();
+    }
+
+    @Override
+    public void showEmpty() {
+        if (mVaryViewHelper != null)mVaryViewHelper.showEmptyView();
+    }
+
+    @Override
+    public void showLoading() {
+        if (mVaryViewHelper != null)mVaryViewHelper.showLoadingView();
     }
 
     @Override
     public void showNetError(Error error, String content) {
-
+        //error can be use
+        if (mVaryViewHelper != null)mVaryViewHelper.showErrorView(content);
     }
 
     @Override
     public void showMessage(String content) {
-
+        ToastUtils.showShortToast(content);
+    }
+    @Override
+    public void showContent() {
+        if (mVaryViewHelper != null)mVaryViewHelper.showDataView();
     }
 }
