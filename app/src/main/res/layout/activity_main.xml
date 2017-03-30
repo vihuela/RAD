@@ -23,7 +23,7 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <com.flyco.tablayout.CommonTabLayout
+        <!--<com.flyco.tablayout.CommonTabLayout
             android:id="@+id/mTab"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -40,7 +40,14 @@
             tl:tl_textsize="15sp"
             tl:tl_underline_color="#DDDDDD"
             tl:tl_underline_gravity="TOP"
-            tl:tl_underline_height="1dp" />
-
+            tl:tl_underline_height="1dp" />-->
+        <com.ashokvarma.bottomnavigation.BottomNavigationBar
+            android:id="@+id/mTab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            tl:bnbActiveColor="@color/colorPrimary"
+            tl:bnbBackgroundColor="#ffffff"
+            tl:bnbBackgroundStyle="background_style_static"/>
     </LinearLayout>
 </layout>

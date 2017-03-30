@@ -18,45 +18,45 @@ public class VaryViewHelper {
     /**
      * 切换不同视图的帮助类
      */
-    OverlapViewHelper mViewHelper;
+    private OverlapViewHelper mViewHelper;
     /**
      * 错误页面
      */
-    View mErrorView;
+    private View mErrorView;
     /**
      * 正在加载页面
      */
-    View mLoadingView;
+    private View mLoadingView;
     /**
      * 数据为空的页面
      */
-    View mEmptyView;
+    private View mEmptyView;
     /**
      * 正在加载页面的进度环
      */
-    ProgressWheel mLoadingProgress;
+    private ProgressWheel mLoadingProgress;
 
     /**
      * 开放的设置
      */
-    BaseVaryViewSetter mViewSetter;
+    private BaseVaryViewSetter mViewSetter;
 
 
-    public VaryViewHelper(View view) {
+    private VaryViewHelper(View view) {
         this(new OverlapViewHelper(view));
     }
 
-    public VaryViewHelper(OverlapViewHelper helper) {
+    private VaryViewHelper(OverlapViewHelper helper) {
         this.mViewHelper = helper;
     }
 
 
-    void setUpEmptyView(View view) {
+    private void setUpEmptyView(View view) {
         mEmptyView = view;
         mEmptyView.setClickable(true);
     }
 
-    void setUpErrorView(View view, View.OnClickListener listener) {
+    private void setUpErrorView(View view, View.OnClickListener listener) {
         mErrorView = view;
         mErrorView.setClickable(true);
 
@@ -66,7 +66,7 @@ public class VaryViewHelper {
         }
     }
 
-    void setUpLoadingView(View view) {
+    private void setUpLoadingView(View view) {
         mLoadingView = view;
         mLoadingView.setClickable(true);
         mLoadingProgress = (ProgressWheel) view.findViewById(R.id.vv_loading_progress);

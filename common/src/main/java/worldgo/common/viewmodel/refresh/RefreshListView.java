@@ -22,9 +22,10 @@ import ricky.oknet.utils.Error;
 import worldgo.common.R;
 import worldgo.common.viewmodel.framework.base.view.BaseRefreshView;
 import worldgo.common.viewmodel.framework.base.view.BaseView;
+import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
 import worldgo.common.viewmodel.refresh.util.CustomLoadMoreView;
 
-public class RefreshListView extends LinearLayout {
+public class RefreshListView<BEAN> extends LinearLayout implements BaseRefreshView<BEAN> {
     public final static int DEFAULT_SIZE = 10;
     public final static int Refresh = 0;
     public final static int LoadMore = 1;
@@ -41,7 +42,6 @@ public class RefreshListView extends LinearLayout {
     private int pageStartOffset = 0;//起始页
     private int currentPage = pageStartOffset;//当前加载页
     private BaseView mBaseView;//与外部对接View的切换
-    @Type
     private int mRefreshType = Refresh;
 
     public RefreshListView(Context context) {
@@ -191,13 +191,16 @@ public class RefreshListView extends LinearLayout {
     /**
      * 加载总页数，通常由接口获取，若没有可传0（请求发送后）
      */
-    public void setPageTotal(int totalPage) {
+    @Override
+    public void setTotalPage(int totalPage) {
         this.totalPage = totalPage;
     }
+
 
     /**
      * 设置数据源（请求发送后）
      */
+    @Override
     public void setData(List beanList, boolean loadMore) {
         if (beanList == null || beanList.size() == 0) {
             //初次加载为空
@@ -242,6 +245,7 @@ public class RefreshListView extends LinearLayout {
         }
     }
 
+    @Override
     public void setMessage(Error error, String content){
         if(mAdapter.getItemCount() == 0){
             if(mBaseView!=null) mBaseView.showNetError(error, content);
@@ -261,7 +265,7 @@ public class RefreshListView extends LinearLayout {
     }
 
 
-/**---------------------------------------------getter---------------------------------------------*/
+    /**---------------------------------------------getter---------------------------------------------*/
 
     public int getPageStartOffset() {
         return pageStartOffset;
@@ -284,6 +288,8 @@ public class RefreshListView extends LinearLayout {
     }
 
 
+
+
     /**---------------------------------------------interface---------------------------------------------*/
 
     public static interface IRefreshListener {
@@ -297,7 +303,46 @@ public class RefreshListView extends LinearLayout {
     @interface Type {
     }
 
-    public  interface IRefreshView<BEAN> extends BaseRefreshView<BEAN> {
+    /**--------------------------------------unUse-----------------------------------------------------*/
+    @Override
+    public void onRefreshData() {
 
     }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void showNetError(Error error, String content) {
+
+    }
+
+    @Override
+    public void showEmpty() {
+
+    }
+
+    @Override
+    public void showContent() {
+
+    }
+
+    @Override
+    public void showMessage(String content) {
+
+    }
+
+    @Nullable
+    @Override
+    public ViewModelBindingConfig getViewModelBindingConfig() {
+        return null;
+    }
+
+    @Override
+    public void removeViewModel() {
+
+    }
+
 }

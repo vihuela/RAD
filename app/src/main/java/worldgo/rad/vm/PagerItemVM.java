@@ -11,7 +11,7 @@ import com.blankj.utilcode.utils.ToastUtils;
 import ricky.oknet.lifecycle.INetQueue;
 import ricky.oknet.utils.Error;
 import worldgo.common.viewmodel.aop.anno.Permission;
-import worldgo.common.viewmodel.refresh.RefreshListView;
+import worldgo.common.viewmodel.framework.base.view.BaseRefreshView;
 import worldgo.rad.databinding.FragmentPagerItemBinding;
 import worldgo.rad.request.call.JsonCallback;
 import worldgo.rad.request.entity.ImageListRequest;
@@ -21,7 +21,7 @@ import worldgo.rad.ui.PagerItemFragment;
  * @author ricky.yao on 2017/3/23.
  */
 
-public class PagerItemVM extends AbsVM<RefreshListView.IRefreshView> {
+public class PagerItemVM extends AbsVM<BaseRefreshView> {
     //双向绑定
     public final ObservableField<String> title = new ObservableField<>();
 
@@ -31,7 +31,7 @@ public class PagerItemVM extends AbsVM<RefreshListView.IRefreshView> {
     }
 
     @Override
-    public void onBindView(@NonNull RefreshListView.IRefreshView view) {
+    public void onBindView(@NonNull BaseRefreshView view) {
         super.onBindView(view);
         if (view instanceof PagerItemFragment) {
             PagerItemFragment pagerItemFragment = (PagerItemFragment) view;

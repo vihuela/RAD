@@ -8,4 +8,6 @@
 
     <dimen name="sp_14">14sp</dimen>
     <dimen name="toolbar_padding_top">0dp</dimen>
+    <dimen name="statusbar_view_height">25dp</dimen>
+
 </resources>

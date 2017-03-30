@@ -6,6 +6,6 @@ import worldgo.rad.request.Api;
 import worldgo.rad.request.util.ApiUtil;
 
 
-abstract class AbsVM<T extends IView> extends AbstractViewModel<T> {
+public abstract class AbsVM<T extends IView> extends AbstractViewModel<T> {
     protected Api mApi = ApiUtil.getApi();
 }

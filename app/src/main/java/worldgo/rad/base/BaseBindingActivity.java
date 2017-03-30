@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,10 +51,6 @@ public abstract class BaseBindingActivity<T extends IView, R1 extends AbstractVi
         onCreateView(savedInstanceState);
         setModelView((T) this);
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
-//            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
-//        }
     }
 
     private void setupVaryView() {

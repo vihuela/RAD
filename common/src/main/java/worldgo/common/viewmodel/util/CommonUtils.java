@@ -4,14 +4,18 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.IntDef;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.utils.SPUtils;
+import com.blankj.utilcode.utils.StringUtils;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -21,10 +25,21 @@ import worldgo.common.viewmodel.util.rx.RxView;
 
 
 public class CommonUtils {
+    public static final int Local = 0;
+    public static final int Remote = 1;
     private final static ColorDrawable DEF_HOLDER = new ColorDrawable(Color.parseColor("#DCDDE1"));
 
-    public static DrawableRequestBuilder getGlideBuilder(String url) {
+    public static DrawableRequestBuilder getGlideStringBuilder(String url) {
         return Glide.with(BaseApplication.getAppContext()).load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(DEF_HOLDER)
+                .centerCrop()
+                .crossFade();
+
+    }
+
+    public static DrawableRequestBuilder getGlideIntegerBuilder(int resId) {
+        return Glide.with(BaseApplication.getAppContext()).load(resId)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
                 .centerCrop()
@@ -35,8 +50,18 @@ public class CommonUtils {
     /**
      * 图片加载
      */
-    public static void imageLoad(ImageView imageView, String url) {
-        getGlideBuilder(url).into(imageView);
+    public static void imageLoad(ImageView imageView, Object url) {
+
+        int targetResId = 0;
+        String targetUrl = null;
+
+        try { targetResId = Integer.parseInt(url.toString());} catch (Exception ignore) {}
+        try { targetUrl = String.valueOf(url);} catch (Exception ignore) {}
+        if (targetResId != 0) {
+            getGlideIntegerBuilder(targetResId).into(imageView);
+        } else if (!StringUtils.isEmpty(targetUrl)) {
+            getGlideStringBuilder(targetUrl).into(imageView);
+        }
     }
 
     /**
@@ -87,6 +112,11 @@ public class CommonUtils {
     public static void loginEnable(boolean isLogin) {
         SPUtils spUtils = new SPUtils("user_status");
         spUtils.putBoolean("user_login", isLogin);
+    }
+
+    @IntDef(value = {Local, Remote})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface ImageType {
     }
 
 }

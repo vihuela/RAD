@@ -7,14 +7,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
+import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.flyco.tablayout.listener.CustomTabEntity;
-import com.flyco.tablayout.listener.OnTabSelectListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import worldgo.common.viewmodel.framework.AbstractViewModel;
-import worldgo.common.viewmodel.util.CommonUtils;
 import worldgo.rad.R;
 import worldgo.rad.databinding.ActivityMainBinding;
 import worldgo.rad.entity.TabEntity;
@@ -28,11 +28,14 @@ import worldgo.rad.ui.PagerItemFragment;
 public class MainActivityVM extends AbstractViewModel<MainActivity> {
     private String[] mTitles = {"妹子", "新闻", "更多"};
     private List<Fragment> mFragment = new ArrayList<>();
+
+    /**CommonTabLayout  unUse*/
     private int[] mIconUnselectIds = {
             R.mipmap.ic_home_normal, R.mipmap.ic_girl_normal, R.mipmap.ic_care_normal};
     private int[] mIconSelectIds = {
             R.mipmap.ic_home_selected, R.mipmap.ic_girl_selected, R.mipmap.ic_care_selected};
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
+
     private ActivityMainBinding binding;
 
     @Override
@@ -50,9 +53,6 @@ public class MainActivityVM extends AbstractViewModel<MainActivity> {
 
             for (String mTitle : mTitles) {
                 mFragment.add(PagerItemFragment.getInstance(mTitle));
-            }
-            for (int i = 0; i < mTitles.length; i++) {
-                mTabEntities.add(new TabEntity(mTitles[i], mIconSelectIds[i], mIconUnselectIds[i]));
             }
         }
 
@@ -74,17 +74,24 @@ public class MainActivityVM extends AbstractViewModel<MainActivity> {
         });
 
 
-        binding.mTab.setTabData(mTabEntities);
-        binding.mTab.setOnTabSelectListener(new OnTabSelectListener() {
+        binding.mTab.addItem(new BottomNavigationItem(R.mipmap.ic_girl_normal, "美图"))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_home_normal, "新闻"))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_care_normal, "更多"))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_care_normal, "木有"))
+                .initialise();
+        binding.mTab.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
             @Override
-            public void onTabSelect(int position) {
+            public void onTabSelected(int position) {
                 binding.mViewPager.setCurrentItem(position, false);
-                //login status mock
-                CommonUtils.loginEnable(position == 1);//TODO
             }
 
             @Override
-            public void onTabReselect(int position) {
+            public void onTabUnselected(int position) {
+
+            }
+
+            @Override
+            public void onTabReselected(int position) {
 
             }
         });
@@ -92,7 +99,7 @@ public class MainActivityVM extends AbstractViewModel<MainActivity> {
         binding.mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                binding.mTab.setCurrentTab(position);
+                binding.mTab.selectTab(position);
             }
         });
 

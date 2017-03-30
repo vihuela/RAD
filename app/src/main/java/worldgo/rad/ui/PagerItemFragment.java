@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.utils.ScreenUtils;
 import com.blankj.utilcode.utils.SizeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ricky.oknet.utils.Error;
+import worldgo.common.viewmodel.framework.base.view.BaseRefreshView;
 import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
 import worldgo.common.viewmodel.refresh.RefreshLayout;
 import worldgo.common.viewmodel.refresh.RefreshListView;
@@ -32,11 +34,11 @@ import worldgo.rad.vm.PagerItemVM;
  * @author ricky.yao on 2017/3/23.
  */
 
-public class PagerItemFragment extends BaseBindingFragment<RefreshListView.IRefreshView, PagerItemVM, FragmentPagerItemBinding> implements RefreshListView.IRefreshView<ImageListRequest.Res.Item> {
+public class PagerItemFragment extends BaseBindingFragment<BaseRefreshView, PagerItemVM, FragmentPagerItemBinding> implements BaseRefreshView<ImageListRequest.Res.Item> {
     private static List mHeights = new ArrayList();
 
     static {
-        Collections.addAll(mHeights, SizeUtils.dp2px(250), SizeUtils.dp2px(100), SizeUtils.dp2px(150));
+        Collections.addAll(mHeights, ScreenUtils.getScreenHeight() / 2, ScreenUtils.getScreenHeight() / 2 / 2);
     }
 
     public String mTitle;
@@ -78,16 +80,31 @@ public class PagerItemFragment extends BaseBindingFragment<RefreshListView.IRefr
 
 
                 ViewGroup.LayoutParams lp = helper.getView(R.id.iv).getLayoutParams();
-                lp.height = (int) mHeights.get(helper.getAdapterPosition() % mHeights.size());
+
+                int index = helper.getAdapterPosition() % mHeights.size();
+
+                //平滑过渡效果实际是预览页在缩放，外部小图要用完整比例配合
+                lp.height = (int) mHeights.get(0);
 
                 helper.getView(R.id.iv).setLayoutParams(lp);
 
-                CommonUtils.imageLoad((ImageView) helper.getView(R.id.iv), item.url);
+                ImageView iv = helper.getView(R.id.iv);
+                CommonUtils.imageLoad(iv, item.url);
+
+//                helper.addOnClickListener(R.id.iv)
             }
         };
+
+        mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                DragPhotoActivity.startPhotoActivity(getActivity(), view, ((ImageListRequest.Res.Item) adapter.getItem(position)).url);
+            }
+        });
+
         mBinding.mRefreshLayout
                 .setBaseView(this)
-                .setPageStartOffset(0)
+                .setPageStartOffset(1)
                 .setPageSize(Api.LIST_SIZE)
                 .setViewType(RefreshListView.Refresh_LoadMore)
                 .setListener(new RefreshListView.IRefreshListener() {
@@ -114,7 +131,7 @@ public class PagerItemFragment extends BaseBindingFragment<RefreshListView.IRefr
 
     @Override
     public void setTotalPage(int totalPage) {
-        mBinding.mRefreshLayout.setPageTotal(totalPage);
+        mBinding.mRefreshLayout.setTotalPage(totalPage);
     }
 
     @Override
