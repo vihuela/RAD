@@ -33,7 +33,6 @@ public class CommonUtils {
         return Glide.with(BaseApplication.getAppContext()).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
-                .centerCrop()
                 .crossFade();
 
     }
@@ -42,7 +41,6 @@ public class CommonUtils {
         return Glide.with(BaseApplication.getAppContext()).load(resId)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
-                .centerCrop()
                 .crossFade();
 
     }
@@ -50,10 +48,14 @@ public class CommonUtils {
     /**
      * 图片加载
      */
-    public static void imageLoad(ImageView imageView, Object url) {
+    public static void imageLoad(ImageView imageView, Object url, ImageView.ScaleType ... scaleType) {
 
         int targetResId = 0;
         String targetUrl = null;
+
+        if(scaleType!=null && scaleType.length == 1){
+            imageView.setScaleType(scaleType[0]);
+        }
 
         try { targetResId = Integer.parseInt(url.toString());} catch (Exception ignore) {}
         try { targetUrl = String.valueOf(url);} catch (Exception ignore) {}

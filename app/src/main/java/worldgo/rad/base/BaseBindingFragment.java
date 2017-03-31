@@ -48,8 +48,8 @@ public abstract class BaseBindingFragment<T extends IView, R extends AbstractVie
         mNetQueue = new NetQueue();
 
         setupVaryView();
-        onCreateView(savedInstanceState);
         setModelView((T) this);
+        onCreateView(savedInstanceState);
         return mView;
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import java.util.List;
 import ricky.oknet.utils.Error;
 import worldgo.common.R;
 import worldgo.common.viewmodel.framework.base.view.BaseRefreshView;
+import worldgo.common.viewmodel.framework.base.view.BaseRefreshViewAdapter;
 import worldgo.common.viewmodel.framework.base.view.BaseView;
 import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
 import worldgo.common.viewmodel.refresh.util.CustomLoadMoreView;
@@ -42,7 +44,13 @@ public class RefreshListView<BEAN> extends LinearLayout implements BaseRefreshVi
     private int pageStartOffset = 0;//起始页
     private int currentPage = pageStartOffset;//当前加载页
     private BaseView mBaseView;//与外部对接View的切换
+    private IRestoreView mRestoreView;
     private int mRefreshType = Refresh;
+    //onSave
+    private int mOnSaveInstance_totalPage;
+    private boolean mOnSaveInstance_loadMore;
+    private Error mOnSaveInstance_error;
+    private String mOnSaveInstance_content;
 
     public RefreshListView(Context context) {
         this(context, null);
@@ -179,6 +187,14 @@ public class RefreshListView<BEAN> extends LinearLayout implements BaseRefreshVi
     }
 
     /**
+     * 利用中间类保存数据（此框架的viewModel在横竖屏切换会保持唯一性，可传入viewModel的实现类）
+     */
+    public RefreshListView setRestoreView(IRestoreView restoreView){
+        this.mRestoreView = restoreView;
+        return this;
+    }
+
+    /**
      * 设置适配器
      */
     public void setAdapter(BaseQuickAdapter mAdapter) {
@@ -193,15 +209,23 @@ public class RefreshListView<BEAN> extends LinearLayout implements BaseRefreshVi
      */
     @Override
     public void setTotalPage(int totalPage) {
+        mOnSaveInstance_totalPage = totalPage;
+
         this.totalPage = totalPage;
     }
 
+    private void setCurrentPage(int currentPage){
+        this.currentPage = currentPage;
+    }
 
     /**
      * 设置数据源（请求发送后）
      */
     @Override
     public void setData(List beanList, boolean loadMore) {
+
+        mOnSaveInstance_loadMore = loadMore;
+
         if (beanList == null || beanList.size() == 0) {
             //初次加载为空
             if(mAdapter.getItemCount()==0 && mBaseView!=null) {
@@ -247,6 +271,10 @@ public class RefreshListView<BEAN> extends LinearLayout implements BaseRefreshVi
 
     @Override
     public void setMessage(Error error, String content){
+
+        mOnSaveInstance_error = error;
+        mOnSaveInstance_content = content;
+
         if(mAdapter.getItemCount() == 0){
             if(mBaseView!=null) mBaseView.showNetError(error, content);
         }
@@ -264,6 +292,33 @@ public class RefreshListView<BEAN> extends LinearLayout implements BaseRefreshVi
         }
     }
 
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(state);
+        if(mRestoreView!=null){
+            SaveInstance saveInstance = mRestoreView.getSaveInstance();
+            if(saveInstance.isDataView()){
+                setTotalPage(saveInstance.getTotalPage());
+                setData(saveInstance.getBeanList(),saveInstance.isLoadMore());
+            }
+            else{ setMessage(saveInstance.getError(),saveInstance.getContent()); }
+            setCurrentPage(saveInstance.getCurrentPageIndex());
+        }
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        if(mRestoreView!=null){
+            SaveInstance saveInstance=new SaveInstance();
+            saveInstance.setDataView(mAdapter.getItemCount()!=0);
+            saveInstance.setTotalPage(mOnSaveInstance_totalPage);
+            saveInstance.setData(mAdapter.getData(),mOnSaveInstance_loadMore );
+            saveInstance.setMessage(mOnSaveInstance_error, mOnSaveInstance_content);
+            saveInstance.setCurrentPage(currentPage);
+            mRestoreView.setSaveInstance(saveInstance);
+        }
+        return super.onSaveInstanceState();
+    }
 
     /**---------------------------------------------getter---------------------------------------------*/
 
@@ -292,6 +347,18 @@ public class RefreshListView<BEAN> extends LinearLayout implements BaseRefreshVi
 
     /**---------------------------------------------interface---------------------------------------------*/
 
+    public static interface IRestoreView{
+
+        /**
+         * 是否已经加载过数据
+         */
+        boolean isDataView();
+
+        void setSaveInstance(SaveInstance saveInstance);
+
+        SaveInstance getSaveInstance();
+    }
+
     public static interface IRefreshListener {
         void onRefresh(RefreshLayout refreshLayout);
 
@@ -303,6 +370,84 @@ public class RefreshListView<BEAN> extends LinearLayout implements BaseRefreshVi
     @interface Type {
     }
 
+    public static class SaveInstance<BEAN> extends BaseRefreshViewAdapter<BEAN> {
+
+        private boolean isDataView;
+
+        private int totalPage ;
+
+        private List<BEAN> beanList ;
+        private boolean loadMore ;
+
+        private Error error ;
+        private String content ;
+
+        private int currentPageIndex;
+
+
+        public void setCurrentPage(int currentPageIndex){
+            this.currentPageIndex =currentPageIndex;
+        }
+
+        public void setDataView(boolean isRequestNet){
+            this.isDataView = isRequestNet;
+        }
+
+        @Override
+        public void setTotalPage(int totalPage) {
+            this.totalPage = totalPage;
+        }
+
+        @Override
+        public void setData(List<BEAN> beanList, boolean loadMore) {
+            this.beanList = beanList;
+            this.loadMore = loadMore;
+        }
+
+        @Override
+        public void setMessage(Error error, String content) {
+            this.error = error;
+            this.content = content;
+        }
+
+        public boolean isDataView(){
+            return isDataView;
+        }
+
+        public int getTotalPage(){
+            return  totalPage;
+        }
+
+        public List<BEAN> getBeanList(){
+            return beanList;
+        }
+
+        public boolean isLoadMore(){
+            return loadMore;
+        }
+
+        public Error getError(){
+            return error;
+        }
+
+        public String getContent(){
+            return content;
+        }
+
+        //todo
+        public int getCurrentPageIndex(){
+            return currentPageIndex;
+        }
+
+        public void restoreData(BaseRefreshView<BEAN> baseRefreshView){
+            if(isDataView()){
+                baseRefreshView.setTotalPage(getTotalPage());
+                baseRefreshView.setData(getBeanList(), isLoadMore());
+            }else{
+                baseRefreshView.setMessage(getError(),getContent());
+            }
+        }
+    }
     /**--------------------------------------unUse-----------------------------------------------------*/
     @Override
     public void onRefreshData() {

@@ -23,5 +23,4 @@ public interface BaseRefreshView<BEAN> extends IView {
      */
 
     void onRefreshData();
-
 }

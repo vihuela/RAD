@@ -81,7 +81,7 @@ public class RefreshScrollingUtil {
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) manager;
 
-                int[] out = layoutManager.findFirstCompletelyVisibleItemPositions(null);
+                int[] out = layoutManager.findFirstVisibleItemPositions(null);//findFirstCompletelyVisibleItemPositions有item高度过高不识别bug
                 if (out[0] < 1) {
                     return true;
                 }

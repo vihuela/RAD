@@ -17,17 +17,17 @@ import java.util.List;
 import worldgo.common.viewmodel.framework.AbstractViewModel;
 import worldgo.rad.R;
 import worldgo.rad.databinding.ActivityMainBinding;
-import worldgo.rad.entity.TabEntity;
 import worldgo.rad.ui.MainActivity;
-import worldgo.rad.ui.PagerItemFragment;
+import worldgo.rad.ui.ImageFragment;
+import worldgo.rad.ui.NewsFragment;
 
 /**
  * @author ricky.yao on 2017/3/23.
  */
 
 public class MainActivityVM extends AbstractViewModel<MainActivity> {
-    private String[] mTitles = {"妹子", "新闻", "更多"};
-    private List<Fragment> mFragment = new ArrayList<>();
+    private String[] mTitles = {"妹子", "新闻"};
+    private List<Fragment> mFragments = new ArrayList<>();
 
     /**CommonTabLayout  unUse*/
     private int[] mIconUnselectIds = {
@@ -49,17 +49,16 @@ public class MainActivityVM extends AbstractViewModel<MainActivity> {
 
         binding = view.getBinding();
 
-        if (mFragment.size() == 0) {
+        if (mFragments.size() == 0) {
 
-            for (String mTitle : mTitles) {
-                mFragment.add(PagerItemFragment.getInstance(mTitle));
-            }
+            mFragments.add(ImageFragment.getInstance(mTitles[0]));
+            mFragments.add(NewsFragment.getInstance(mTitles[1]));
         }
 
         binding.mViewPager.setAdapter(new FragmentPagerAdapter(view.getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                return mFragment.get(position);
+                return mFragments.get(position);
             }
 
             @Override
@@ -76,7 +75,7 @@ public class MainActivityVM extends AbstractViewModel<MainActivity> {
 
         binding.mTab.addItem(new BottomNavigationItem(R.mipmap.ic_girl_normal, "美图"))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_home_normal, "新闻"))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_care_normal, "更多"))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_care_normal, "木有"))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_care_normal, "木有"))
                 .initialise();
         binding.mTab.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {

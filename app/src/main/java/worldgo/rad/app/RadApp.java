@@ -2,6 +2,7 @@ package worldgo.rad.app;
 
 import android.content.Context;
 
+import com.blankj.utilcode.utils.ScreenUtils;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.squareup.leakcanary.LeakCanary;
@@ -34,12 +35,12 @@ public class RadApp extends BaseApplication {
 
         if (isDebug()) {
             //chrome debug [chrome://inspect/#devices]
-            Stetho.initialize(
-                    Stetho.newInitializerBuilder(this)
-                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                            .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-                            .build());
-            OkGo.getInstance().getOkHttpClientBuilder().addNetworkInterceptor(new StethoInterceptor());
+//            Stetho.initialize(
+//                    Stetho.newInitializerBuilder(this)
+//                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+//                            .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+//                            .build());
+//            OkGo.getInstance().getOkHttpClientBuilder().addNetworkInterceptor(new StethoInterceptor());
         }
     }
 

@@ -48,8 +48,8 @@ public abstract class BaseBindingActivity<T extends IView, R1 extends AbstractVi
         mNetQueue = new NetQueue();
 
         setupVaryView();
-        onCreateView(savedInstanceState);
         setModelView((T) this);
+        onCreateView(savedInstanceState);
 
     }
 

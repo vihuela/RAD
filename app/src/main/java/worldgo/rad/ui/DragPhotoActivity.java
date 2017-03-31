@@ -62,7 +62,7 @@ public class DragPhotoActivity extends BaseBindingActivity<IView, EmptyVM, Aciti
 
         StatusBarUtil.setTransparent(this);
 
-        CommonUtils.imageLoad(mBinding.mDragView, getIntent().getStringExtra("url"));
+        CommonUtils.imageLoad(mBinding.mDragView, getIntent().getStringExtra("url"), ImageView.ScaleType.CENTER_CROP);
 
 
         mBinding.mDragView.setOnTapListener(new DragPhotoView.OnTapListener() {

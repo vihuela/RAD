@@ -1,10 +1,10 @@
 package worldgo.rad.ui;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.utils.ScreenUtils;
@@ -28,13 +28,13 @@ import worldgo.rad.base.BaseBindingFragment;
 import worldgo.rad.databinding.FragmentPagerItemBinding;
 import worldgo.rad.request.Api;
 import worldgo.rad.request.entity.ImageListRequest;
-import worldgo.rad.vm.PagerItemVM;
+import worldgo.rad.vm.ImageFragmentVM;
 
 /**
  * @author ricky.yao on 2017/3/23.
  */
 
-public class PagerItemFragment extends BaseBindingFragment<BaseRefreshView, PagerItemVM, FragmentPagerItemBinding> implements BaseRefreshView<ImageListRequest.Res.Item> {
+public class ImageFragment extends BaseBindingFragment<BaseRefreshView, ImageFragmentVM, FragmentPagerItemBinding> implements BaseRefreshView<ImageListRequest.Res.Item> {
     private static List mHeights = new ArrayList();
 
     static {
@@ -43,8 +43,8 @@ public class PagerItemFragment extends BaseBindingFragment<BaseRefreshView, Page
 
     public String mTitle;
 
-    public static PagerItemFragment getInstance(String title) {
-        PagerItemFragment sf = new PagerItemFragment();
+    public static ImageFragment getInstance(String title) {
+        ImageFragment sf = new ImageFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
         sf.setArguments(args);
@@ -78,23 +78,13 @@ public class PagerItemFragment extends BaseBindingFragment<BaseRefreshView, Page
             @Override
             protected void convert(BaseViewHolder helper, ImageListRequest.Res.Item item) {
 
+                final ImageView iv = helper.getView(R.id.iv);
 
-                ViewGroup.LayoutParams lp = helper.getView(R.id.iv).getLayoutParams();
-
-                int index = helper.getAdapterPosition() % mHeights.size();
-
-                //平滑过渡效果实际是预览页在缩放，外部小图要用完整比例配合
-                lp.height = (int) mHeights.get(0);
-
-                helper.getView(R.id.iv).setLayoutParams(lp);
-
-                ImageView iv = helper.getView(R.id.iv);
-                CommonUtils.imageLoad(iv, item.url);
+                CommonUtils.imageLoad(iv, item.url, ImageView.ScaleType.CENTER_CROP);
 
 //                helper.addOnClickListener(R.id.iv)
             }
         };
-
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -104,6 +94,7 @@ public class PagerItemFragment extends BaseBindingFragment<BaseRefreshView, Page
 
         mBinding.mRefreshLayout
                 .setBaseView(this)
+                .setRestoreView(getViewModel())
                 .setPageStartOffset(1)
                 .setPageSize(Api.LIST_SIZE)
                 .setViewType(RefreshListView.Refresh_LoadMore)
@@ -124,8 +115,10 @@ public class PagerItemFragment extends BaseBindingFragment<BaseRefreshView, Page
 
     @Override
     protected void onFirstUserVisible() {
-        showLoading();
-        onRefreshData();
+        if (!getViewModel().isDataView()) {
+            showLoading();
+            onRefreshData();
+        }
     }
 
 

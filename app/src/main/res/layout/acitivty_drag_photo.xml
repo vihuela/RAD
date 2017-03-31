@@ -5,7 +5,6 @@
     <worldgo.common.viewmodel.util.view.DragPhotoView
         android:id="@+id/mDragView"
         android:layout_width="match_parent"
-        android:scaleType="centerCrop"
         android:layout_height="match_parent"
         android:orientation="vertical" />
 </layout>
