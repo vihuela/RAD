@@ -1,7 +1,6 @@
 package worldgo.rad.ui;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -16,11 +15,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ricky.oknet.utils.Error;
-import worldgo.common.viewmodel.framework.base.view.BaseRefreshView;
 import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
 import worldgo.common.viewmodel.refresh.RefreshLayout;
 import worldgo.common.viewmodel.refresh.RefreshListView;
+import worldgo.common.viewmodel.refresh.base.BaseRefreshView;
+import worldgo.common.viewmodel.refresh.interfaces.IRefreshView;
 import worldgo.common.viewmodel.util.CommonUtils;
 import worldgo.common.viewmodel.util.decoration.GridItemDecoration;
 import worldgo.rad.R;
@@ -34,7 +33,7 @@ import worldgo.rad.vm.ImageFragmentVM;
  * @author ricky.yao on 2017/3/23.
  */
 
-public class ImageFragment extends BaseBindingFragment<BaseRefreshView, ImageFragmentVM, FragmentPagerItemBinding> implements BaseRefreshView<ImageListRequest.Res.Item> {
+public class ImageFragment extends BaseBindingFragment<IRefreshView, ImageFragmentVM, FragmentPagerItemBinding> implements IRefreshView {
     private static List mHeights = new ArrayList();
 
     static {
@@ -123,21 +122,11 @@ public class ImageFragment extends BaseBindingFragment<BaseRefreshView, ImageFra
 
 
     @Override
-    public void setTotalPage(int totalPage) {
-        mBinding.mRefreshLayout.setTotalPage(totalPage);
+    public BaseRefreshView getRefreshView() {
+        return mBinding.mRefreshLayout;
     }
 
-    @Override
-    public void setData(List<ImageListRequest.Res.Item> items, boolean loadMore) {
-        mBinding.mRefreshLayout.setData(items, loadMore);
-    }
 
-    @Override
-    public void setMessage(Error error, String content) {
-        mBinding.mRefreshLayout.setMessage(error, content);
-    }
-
-    @Override
     public void onRefreshData() {
         getViewModel().getImageList(mBinding.mRefreshLayout.getSize(), mBinding.mRefreshLayout.getPageStartOffset(), mNetQueue, false);
     }

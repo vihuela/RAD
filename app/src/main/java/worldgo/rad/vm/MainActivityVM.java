@@ -19,7 +19,6 @@ import worldgo.rad.R;
 import worldgo.rad.databinding.ActivityMainBinding;
 import worldgo.rad.ui.MainActivity;
 import worldgo.rad.ui.ImageFragment;
-import worldgo.rad.ui.NewsFragment;
 
 /**
  * @author ricky.yao on 2017/3/23.
@@ -52,7 +51,7 @@ public class MainActivityVM extends AbstractViewModel<MainActivity> {
         if (mFragments.size() == 0) {
 
             mFragments.add(ImageFragment.getInstance(mTitles[0]));
-            mFragments.add(NewsFragment.getInstance(mTitles[1]));
+            mFragments.add(ImageFragment.getInstance(mTitles[1]));
         }
 
         binding.mViewPager.setAdapter(new FragmentPagerAdapter(view.getSupportFragmentManager()) {

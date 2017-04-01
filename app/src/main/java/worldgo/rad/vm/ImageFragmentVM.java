@@ -11,8 +11,8 @@ import com.blankj.utilcode.utils.ToastUtils;
 import ricky.oknet.lifecycle.INetQueue;
 import ricky.oknet.utils.Error;
 import worldgo.common.viewmodel.aop.anno.Permission;
-import worldgo.common.viewmodel.framework.base.view.BaseRefreshView;
 import worldgo.common.viewmodel.refresh.RefreshListView;
+import worldgo.common.viewmodel.refresh.interfaces.IRefreshView;
 import worldgo.rad.databinding.FragmentPagerItemBinding;
 import worldgo.rad.request.call.JsonCallback;
 import worldgo.rad.request.entity.ImageListRequest;
@@ -22,11 +22,12 @@ import worldgo.rad.ui.ImageFragment;
  * @author ricky.yao on 2017/3/23.
  */
 
-public class ImageFragmentVM extends AbsVM<BaseRefreshView> implements RefreshListView.IRestoreView{
+public class ImageFragmentVM extends AbsVM<IRefreshView> implements RefreshListView.IRestoreInstance {
+
     //双向绑定
     public final ObservableField<String> title = new ObservableField<>();
 
-    private RefreshListView.SaveInstance mSaveInstance;
+    private RefreshListView.SaveInstance mOnSaveInstance;
 
 
     @Override
@@ -35,7 +36,7 @@ public class ImageFragmentVM extends AbsVM<BaseRefreshView> implements RefreshLi
     }
 
     @Override
-    public void onBindView(@NonNull BaseRefreshView view) {
+    public void onBindView(@NonNull IRefreshView view) {
         super.onBindView(view);
         if (view instanceof ImageFragment) {
             ImageFragment imageFragment = (ImageFragment) view;
@@ -58,6 +59,8 @@ public class ImageFragmentVM extends AbsVM<BaseRefreshView> implements RefreshLi
     }
 
     public void getImageList(int size, int page, INetQueue iNetQueue, final boolean loadMore) {
+
+
         mApi.getImageList(size, page).execute(new JsonCallback<ImageListRequest.Res>() {
             @Override
             public void success(ImageListRequest.Res res, boolean fromCache) {
@@ -66,31 +69,33 @@ public class ImageFragmentVM extends AbsVM<BaseRefreshView> implements RefreshLi
                     //获取总页数
                     int totalPage = 20;
 
-                    getView().setTotalPage(totalPage);
-                    getView().setData(res.results, loadMore);
+                    getView().getRefreshView().setTotalPage(totalPage);
+                    getView().getRefreshView().setData(res.results, loadMore);
+
                 }
             }
 
             @Override
             public void error(Error error, String message) {
                 super.error(error, message);
-                getView().setMessage(error, message);
+                getView().getRefreshView().setMessage(error, message);
             }
         }, iNetQueue);
     }
 
     @Override
     public boolean isDataView() {
-        return mSaveInstance!=null && mSaveInstance.isDataView();
+        return mOnSaveInstance !=null && mOnSaveInstance.isDataView();
     }
 
     @Override
-    public void setSaveInstance(RefreshListView.SaveInstance saveInstance) {
-        mSaveInstance = saveInstance;
+    public void setSaveInstance(@NonNull RefreshListView.SaveInstance saveInstance) {
+        mOnSaveInstance = saveInstance;
     }
 
     @Override
     public RefreshListView.SaveInstance getSaveInstance() {
-        return mSaveInstance;
+        return mOnSaveInstance;
     }
+
 }
