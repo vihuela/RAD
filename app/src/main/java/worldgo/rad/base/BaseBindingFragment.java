@@ -31,7 +31,6 @@ public abstract class BaseBindingFragment<T extends IView, R extends AbstractVie
 
     //net queue
     public INetQueue mNetQueue;
-    protected Context mContext;
     protected B mBinding;
     protected View mView;
     protected VaryViewHelper mVaryViewHelper;
@@ -57,9 +56,9 @@ public abstract class BaseBindingFragment<T extends IView, R extends AbstractVie
         if (setStatusTargetView() != null) {//无效请给setStatusTargetView()套一层FrameLayout
             mVaryViewHelper = new VaryViewHelper.Builder()
                     .setDataView(setStatusTargetView())
-                    .setLoadingView(LayoutInflater.from(mContext).inflate(worldgo.common.R.layout.vary_view_loadingview, null))
-                    .setEmptyView(LayoutInflater.from(mContext).inflate(worldgo.common.R.layout.vary_view_emptyview, null))
-                    .setErrorView(LayoutInflater.from(mContext).inflate(worldgo.common.R.layout.vary_view_errorview, null))
+                    .setLoadingView(LayoutInflater.from(getActivity()).inflate(worldgo.common.R.layout.vary_view_loadingview, null))
+                    .setEmptyView(LayoutInflater.from(getActivity()).inflate(worldgo.common.R.layout.vary_view_emptyview, null))
+                    .setErrorView(LayoutInflater.from(getActivity()).inflate(worldgo.common.R.layout.vary_view_errorview, null))
                     .setRefreshListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -92,7 +91,6 @@ public abstract class BaseBindingFragment<T extends IView, R extends AbstractVie
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
     }
 
     @Override

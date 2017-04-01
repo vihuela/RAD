@@ -2,6 +2,7 @@ package worldgo.rad.util;
 
 import worldgo.common.R;
 import worldgo.common.viewmodel.varyview.BaseVaryViewSetter;
+import worldgo.common.viewmodel.varyview.anim.FadeViewAnimProvider;
 import worldgo.common.viewmodel.varyview.anim.ViewAnimProvider;
 
 
@@ -28,6 +29,6 @@ public class DefaultVaryViewSetter extends BaseVaryViewSetter {
 
     @Override
     public ViewAnimProvider setViewAnimProvider() {
-        return null;
+        return new FadeViewAnimProvider();
     }
 }

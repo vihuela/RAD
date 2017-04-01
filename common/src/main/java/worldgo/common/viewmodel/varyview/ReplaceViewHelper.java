@@ -94,7 +94,7 @@ public class ReplaceViewHelper implements ICaseViewHelper {
                 hideAnimation.setAnimationListener(new AniLis() {
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        /*切换的时候，先移除原先显示的View,再显示需要的View*/
+                        //切换的时候，先移除原先显示的View,再显示需要的View
                         mParentView.removeViewAt(mViewIndex);
                         mParentView.addView(toView, mViewIndex, mLayoutParams);
                         toView.startAnimation(mViewAnimProvider.showAnimation());

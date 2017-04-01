@@ -65,27 +65,24 @@ public class ImageFragmentVM extends AbsVM<IRefreshView> implements RefreshListV
             @Override
             public void success(ImageListRequest.Res res, boolean fromCache) {
 
-                if (getView() != null) {
-                    //获取总页数
-                    int totalPage = 20;
+                //获取总页数
+                int totalPage = 20;
 
-                    getView().getRefreshView().setTotalPage(totalPage);
-                    getView().getRefreshView().setData(res.results, loadMore);
-
-                }
+                getViewOptional().getRefreshView().setTotalPage(totalPage);
+                getViewOptional().getRefreshView().setData(res.results, loadMore);
             }
 
             @Override
             public void error(Error error, String message) {
                 super.error(error, message);
-                getView().getRefreshView().setMessage(error, message);
+                getViewOptional().getRefreshView().setMessage(error, message);
             }
         }, iNetQueue);
     }
 
     @Override
-    public boolean isDataView() {
-        return mOnSaveInstance !=null && mOnSaveInstance.isDataView();
+    public boolean isLoaded() {
+        return mOnSaveInstance !=null && mOnSaveInstance.isLoaded();
     }
 
     @Override

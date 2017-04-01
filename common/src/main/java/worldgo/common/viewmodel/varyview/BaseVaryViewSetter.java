@@ -25,7 +25,7 @@ public abstract class BaseVaryViewSetter {
         errorItem = setError();
         loadingContent = setLoadingContent();
         varyViewBackground = (setVaryViewBackground() == 0 || setVaryViewBackground() == -1) ? DEFAULT_BG : setVaryViewBackground();
-        viewAnimProvider = setViewAnimProvider() == null ? new FadeViewAnimProvider() : setViewAnimProvider();
+        viewAnimProvider = setViewAnimProvider();
     }
 
     static void setText(View root, @IdRes int textView, String content) {

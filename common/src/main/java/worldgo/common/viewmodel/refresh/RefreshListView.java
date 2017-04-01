@@ -66,6 +66,7 @@ public class RefreshListView extends FrameLayout implements BaseRefreshView{
     private BaseView mBaseView;//与外部对接View的切换
     private IRestoreInstance mRestoreView;
     private int mRefreshType = Refresh;
+    private boolean isInit;//已经请求过数据
     //onSave
     private int mOnSaveInstance_totalPage;
     private boolean mOnSaveInstance_loadMore;
@@ -241,6 +242,8 @@ public class RefreshListView extends FrameLayout implements BaseRefreshView{
      */
     public void setData(List beanList, boolean loadMore) {
 
+        isInit = true;
+
         mOnSaveInstance_loadMore = loadMore;
 
         if (beanList == null || beanList.size() == 0) {
@@ -289,6 +292,8 @@ public class RefreshListView extends FrameLayout implements BaseRefreshView{
     @Override
     public void setMessage(Error error, String content){
 
+        isInit = true;
+
         mOnSaveInstance_error = error;
         mOnSaveInstance_content = content;
 
@@ -315,27 +320,27 @@ public class RefreshListView extends FrameLayout implements BaseRefreshView{
         super.onRestoreInstanceState(state);
         if(mRestoreView!=null){
             SaveInstance saveInstance = mRestoreView.getSaveInstance();
-            if(saveInstance!=null){
+            if(saveInstance!=null && saveInstance.isInit){
                 if(saveInstance.isDataView){
                     setTotalPage(saveInstance.totalPage);
                     setData(saveInstance.beanList, saveInstance.loadMore);
                 }
-                else{ setMessage(saveInstance.error, saveInstance.content); }
+                else{  setMessage(saveInstance.error, saveInstance.content); }
                 setCurrentPage(saveInstance.currentPageIndex);
             }
-
         }
     }
 
     @Override
     protected Parcelable onSaveInstanceState() {
-        if(mRestoreView!=null){
+        if(mRestoreView!=null && isInit){
             SaveInstance saveInstance =new SaveInstance();
             saveInstance.setDataView(mAdapter.getItemCount()!=0);
             saveInstance.setTotalPage(mOnSaveInstance_totalPage);
             saveInstance.setData(mAdapter.getData(),mOnSaveInstance_loadMore );
             saveInstance.setMessage(mOnSaveInstance_error, mOnSaveInstance_content);
             saveInstance.setCurrentPage(currentPage);
+            saveInstance.setInit(isInit);
             mRestoreView.setSaveInstance(saveInstance);
         }
         return super.onSaveInstanceState();
@@ -383,7 +388,7 @@ public class RefreshListView extends FrameLayout implements BaseRefreshView{
     public static interface IRestoreInstance {
 
         @CheckResult
-        boolean isDataView();
+        boolean isLoaded();
 
         void setSaveInstance(@NonNull RefreshListView.SaveInstance saveInstance);
 
@@ -394,6 +399,8 @@ public class RefreshListView extends FrameLayout implements BaseRefreshView{
 
     public static class SaveInstance implements BaseRefreshView {
 
+         boolean isInit;
+
          boolean isDataView;  int totalPage ;
 
          List beanList ; boolean loadMore ;
@@ -402,11 +409,16 @@ public class RefreshListView extends FrameLayout implements BaseRefreshView{
 
          int currentPageIndex;
 
-        //已经有过数据展示
-        public boolean isDataView(){  return isDataView ;   }
+
+        //已经请求过数据
+        public boolean isLoaded(){  return isInit ;   }
 
         void setCurrentPage(int currentPageIndex){
             this.currentPageIndex =currentPageIndex;
+        }
+
+        void setInit(boolean isInit){
+            this.isInit = isInit;
         }
 
         void setDataView(boolean isRequestNet){

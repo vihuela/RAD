@@ -17,8 +17,8 @@ import java.util.List;
 import worldgo.common.viewmodel.framework.AbstractViewModel;
 import worldgo.rad.R;
 import worldgo.rad.databinding.ActivityMainBinding;
-import worldgo.rad.ui.MainActivity;
 import worldgo.rad.ui.ImageFragment;
+import worldgo.rad.ui.MainActivity;
 
 /**
  * @author ricky.yao on 2017/3/23.
@@ -26,9 +26,16 @@ import worldgo.rad.ui.ImageFragment;
 
 public class MainActivityVM extends AbstractViewModel<MainActivity> {
     private String[] mTitles = {"妹子", "新闻"};
-    private List<Fragment> mFragments = new ArrayList<>();
+    private final ThreadLocal<List<Fragment>> mFragments = new ThreadLocal<List<Fragment>>() {
+        @Override
+        protected List<Fragment> initialValue() {
+            return new ArrayList<>();
+        }
+    };
 
-    /**CommonTabLayout  unUse*/
+    /**
+     * CommonTabLayout  unUse
+     */
     private int[] mIconUnselectIds = {
             R.mipmap.ic_home_normal, R.mipmap.ic_girl_normal, R.mipmap.ic_care_normal};
     private int[] mIconSelectIds = {
@@ -48,16 +55,14 @@ public class MainActivityVM extends AbstractViewModel<MainActivity> {
 
         binding = view.getBinding();
 
-        if (mFragments.size() == 0) {
-
-            mFragments.add(ImageFragment.getInstance(mTitles[0]));
-            mFragments.add(ImageFragment.getInstance(mTitles[1]));
-        }
+        mFragments.get().clear();
+        mFragments.get().add(ImageFragment.getInstance(mTitles[0]));
+        mFragments.get().add(ImageFragment.getInstance(mTitles[1]));
 
         binding.mViewPager.setAdapter(new FragmentPagerAdapter(view.getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                return mFragments.get(position);
+                return mFragments.get().get(position);
             }
 
             @Override
