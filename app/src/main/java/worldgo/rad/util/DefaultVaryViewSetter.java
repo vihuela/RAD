@@ -29,6 +29,6 @@ public class DefaultVaryViewSetter extends BaseVaryViewSetter {
 
     @Override
     public ViewAnimProvider setViewAnimProvider() {
-        return new FadeViewAnimProvider();
+        return /*new FadeViewAnimProvider()*/null;
     }
 }

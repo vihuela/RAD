@@ -16,6 +16,7 @@ import worldgo.common.viewmodel.refresh.interfaces.IRefreshView;
 import worldgo.rad.databinding.FragmentPagerItemBinding;
 import worldgo.rad.request.call.JsonCallback;
 import worldgo.rad.request.entity.ImageListRequest;
+import worldgo.rad.request.entity.NewsRequest;
 import worldgo.rad.ui.ImageFragment;
 
 /**
@@ -23,7 +24,6 @@ import worldgo.rad.ui.ImageFragment;
  */
 
 public class ImageFragmentVM extends AbsVM<IRefreshView> implements RefreshListView.IRestoreInstance {
-
     //双向绑定
     public final ObservableField<String> title = new ObservableField<>();
 

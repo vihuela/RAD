@@ -7,4 +7,5 @@
     <color name="gray_color">#4b4b58</color>
     <color name="bg">#FAFAFA</color>
     <color name="translucent">#00000000</color>
+    <color name="colorPrimary50">#70FA7C20</color>
 </resources>

@@ -201,4 +201,5 @@ public abstract class BaseBindingFragment<T extends IView, R extends AbstractVie
     public void showContent() {
         if (mVaryViewHelper != null)mVaryViewHelper.showDataView();
     }
+
 }

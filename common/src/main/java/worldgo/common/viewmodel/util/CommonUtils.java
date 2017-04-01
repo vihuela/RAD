@@ -16,6 +16,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -88,6 +92,7 @@ public class CommonUtils {
                     }
                 });
     }
+
 
     /**
      * 判断是否是主进程

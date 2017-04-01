@@ -190,7 +190,7 @@ public class RefreshListView extends FrameLayout implements BaseRefreshView{
     }
 
     /**
-     * 每次加载条目数，与保持接口一致!
+     * 每次加载条目数，与保持接口一致!用于在未传totalPage之后判断是否加载更多
      */
     public RefreshListView setPageSize(int size) {
         this.size = size;

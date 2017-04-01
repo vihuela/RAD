@@ -29,6 +29,7 @@ public class RadApp extends BaseApplication {
     public void onMainProcessCreate() {
         refWatcher = LeakCanary.install(this);
         //net
+        OkGo.init(this);
         OkGo.getInstance()
                 .baseUrl("http://gank.io/api/data/")
                 .debug("rad", Level.INFO, isDebug());

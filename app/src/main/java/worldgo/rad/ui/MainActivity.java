@@ -2,7 +2,6 @@ package worldgo.rad.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.View;
 
 import com.jaeger.library.StatusBarUtil;
 
@@ -11,7 +10,6 @@ import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
 import worldgo.rad.R;
 import worldgo.rad.base.BaseBindingActivity;
 import worldgo.rad.databinding.ActivityMainBinding;
-import worldgo.rad.request.entity.ImageListRequest;
 import worldgo.rad.vm.MainActivityVM;
 
 public class MainActivity extends BaseBindingActivity<MainActivity, MainActivityVM, ActivityMainBinding> {
