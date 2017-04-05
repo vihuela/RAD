@@ -48,7 +48,7 @@ dependencies {
     compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'//https://github.com/H07000223/FlycoTabLayout/blob/master/README_CN.md
     compile 'com.ashokvarma.android:bottom-navigation-bar:1.4.1'
     //net（have rx1）
-    compile 'com.ricky:oknet:1.2.4'
+    compile 'com.ricky:oknet:1.2.6'
     //db（have rx1）
     compile 'com.pushtorefresh.storio:sqlite:1.12.3'//https://github.com/pushtorefresh/storio
     //aop

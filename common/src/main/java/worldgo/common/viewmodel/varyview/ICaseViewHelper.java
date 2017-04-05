@@ -8,7 +8,7 @@ package worldgo.common.viewmodel.varyview;
 import android.content.Context;
 import android.view.View;
 
-import worldgo.common.viewmodel.varyview.anim.ViewAnimProvider;
+import worldgo.common.viewmodel.varyview.anim.VaryViewAnimProvider;
 
 /**
  * 功能：切换页面的接口
@@ -68,5 +68,5 @@ public interface ICaseViewHelper {
      *
      * @param viewAnimProvider 动画提供
      */
-    void setViewAnimProvider(ViewAnimProvider viewAnimProvider);
+    void setViewAnimProvider(VaryViewAnimProvider viewAnimProvider);
 }

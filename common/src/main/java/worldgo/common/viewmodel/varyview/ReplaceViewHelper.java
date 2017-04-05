@@ -5,14 +5,17 @@
 
 package worldgo.common.viewmodel.varyview;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 
-import worldgo.common.viewmodel.varyview.anim.FadeScaleViewAnimProvider;
-import worldgo.common.viewmodel.varyview.anim.ViewAnimProvider;
+import worldgo.common.R;
+import worldgo.common.viewmodel.varyview.anim.VaryViewAnimProvider;
 
 /**
  * 功能：切换布局，用一个新的View替换原先的View
@@ -25,7 +28,7 @@ public class ReplaceViewHelper implements ICaseViewHelper {
     public ViewGroup mParentView;
     public ViewGroup.LayoutParams mLayoutParams;
     public int mViewIndex;
-    private ViewAnimProvider mViewAnimProvider;
+    private VaryViewAnimProvider mViewAnimProvider;
 
     public ReplaceViewHelper(View dataView) {
 
@@ -74,7 +77,9 @@ public class ReplaceViewHelper implements ICaseViewHelper {
         showCaseLayout(mDataView);
     }
 
-    /**toView 在holderView与targetView之间切换*/
+    /**
+     * toView 在holderView与targetView之间切换
+     */
     @Override
     public void showCaseLayout(final View toView) {
         if (toView == null) {
@@ -89,23 +94,40 @@ public class ReplaceViewHelper implements ICaseViewHelper {
                 parent.removeView(toView);
             }
 
-            if (mViewAnimProvider != null) {
-                final Animation hideAnimation = mViewAnimProvider.hideAnimation();
-                hideAnimation.setAnimationListener(new AniLis() {
+            //remove anim
+            ValueAnimator hideAnimation = mViewAnimProvider.hideAnimation();
+            if (hideAnimation != null && toView.getId() == R.id.varyView_holder_view) {
+                //还原布局
+                //fromView
+                fromView.setAlpha(1);
+
+                hideAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
-                    public void onAnimationEnd(Animation animation) {
-                        //切换的时候，先移除原先显示的View,再显示需要的View
-                        mParentView.removeViewAt(mViewIndex);
-                        mParentView.addView(toView, mViewIndex, mLayoutParams);
-                        toView.startAnimation(mViewAnimProvider.showAnimation());
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        fromView.setAlpha((Float) animation.getAnimatedValue());
                     }
                 });
-                fromView.startAnimation(hideAnimation);
+                hideAnimation.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        removeFromViewAddToView(toView);
+                        fromView.setAlpha(1);
+                    }
+                });
+
+                hideAnimation.start();
             } else {
-                mParentView.removeViewAt(mViewIndex);
-                mParentView.addView(toView, mViewIndex, mLayoutParams);
+                removeFromViewAddToView(toView);
             }
+
+
         }
+    }
+
+    private void removeFromViewAddToView(View toView) {
+        //在同一个位置替换
+        mParentView.removeViewAt(mViewIndex);
+        mParentView.addView(toView, mViewIndex, mLayoutParams);
     }
 
     @Override
@@ -119,7 +141,7 @@ public class ReplaceViewHelper implements ICaseViewHelper {
     }
 
     @Override
-    public void setViewAnimProvider(ViewAnimProvider viewAnimProvider) {
+    public void setViewAnimProvider(VaryViewAnimProvider viewAnimProvider) {
         mViewAnimProvider = viewAnimProvider;
     }
 

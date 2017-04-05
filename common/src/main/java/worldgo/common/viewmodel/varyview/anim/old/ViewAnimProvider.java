@@ -1,4 +1,4 @@
-package worldgo.common.viewmodel.varyview.anim;
+package worldgo.common.viewmodel.varyview.anim.old;
 
 import android.view.animation.Animation;
 

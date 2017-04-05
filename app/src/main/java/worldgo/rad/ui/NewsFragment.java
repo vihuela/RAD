@@ -1,12 +1,14 @@
 package worldgo.rad.ui;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.utils.HandlerUtils;
 import com.blankj.utilcode.utils.ScreenUtils;
 import com.blankj.utilcode.utils.SizeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -38,7 +40,7 @@ import worldgo.rad.vm.NewsFragmentVM;
  * @author ricky.yao on 2017/3/23.
  */
 
-public class NewsFragment extends BaseBindingFragment<IRefreshView, NewsFragmentVM, FragmentPagerItemNewBinding> implements IRefreshView{
+public class NewsFragment extends BaseBindingFragment<IRefreshView, NewsFragmentVM, FragmentPagerItemNewBinding> implements IRefreshView {
 
     public String mTitle;
 

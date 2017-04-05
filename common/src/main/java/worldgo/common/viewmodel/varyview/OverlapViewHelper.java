@@ -10,7 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import worldgo.common.viewmodel.varyview.anim.ViewAnimProvider;
+import worldgo.common.R;
+import worldgo.common.viewmodel.varyview.anim.VaryViewAnimProvider;
 
 
 /**
@@ -54,6 +55,7 @@ public class OverlapViewHelper implements ICaseViewHelper {
         /*在这个frameLayout中实现将新的View覆盖在原来的view上*/
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         View floatView = new View(view.getContext());
+        floatView.setId(R.id.varyView_holder_view);
         frameLayout.addView(view, params);
         frameLayout.addView(floatView, params);
         /*帧布局中有两层View，原始View与占位符View,占位符View负责切换*/
@@ -100,7 +102,7 @@ public class OverlapViewHelper implements ICaseViewHelper {
         mVaryViewBackground = varyViewBackground;
     }
     @Override
-    public void setViewAnimProvider(ViewAnimProvider viewAnimProvider) {
+    public void setViewAnimProvider(VaryViewAnimProvider viewAnimProvider) {
         mHelper.setViewAnimProvider(viewAnimProvider);
     }
 }

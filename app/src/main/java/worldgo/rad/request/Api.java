@@ -19,7 +19,7 @@ public interface Api {
     @GET("福利/{size}/{page}")
     Net<ImageListRequest.Res> getImageList(@Path("size") int size, @Path("page") int page);
 
-    @CACHE(CacheMode.FIRST_CACHE_THEN_REQUEST)
+    @CACHE(CacheMode.REQUEST_FAILED_READ_CACHE)
     @GET("http://news-at.zhihu.com/api/4/news/latest")
     Net<NewsRequest.Res> getNewForLast();
 

@@ -8,8 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import worldgo.common.viewmodel.util.ViewUtils;
-import worldgo.common.viewmodel.varyview.anim.FadeViewAnimProvider;
-import worldgo.common.viewmodel.varyview.anim.ViewAnimProvider;
+import worldgo.common.viewmodel.varyview.anim.VaryViewAnimProvider;
 
 public abstract class BaseVaryViewSetter {
 
@@ -18,7 +17,7 @@ public abstract class BaseVaryViewSetter {
     private VaryItem errorItem;
     private String loadingContent;
     private int varyViewBackground;
-    private ViewAnimProvider viewAnimProvider;
+    private VaryViewAnimProvider viewAnimProvider;
 
     public BaseVaryViewSetter() {
         emptyItem = setEmpty();
@@ -49,7 +48,7 @@ public abstract class BaseVaryViewSetter {
     /**
      * 切换View时的动画
      */
-    public abstract ViewAnimProvider setViewAnimProvider();
+    public abstract VaryViewAnimProvider setViewAnimProvider();
 
     /**
      * getter--------------------------------
@@ -70,7 +69,7 @@ public abstract class BaseVaryViewSetter {
         return varyViewBackground;
     }
 
-    ViewAnimProvider getViewAnimProvider() {
+    VaryViewAnimProvider getViewAnimProvider() {
         return viewAnimProvider;
     }
 

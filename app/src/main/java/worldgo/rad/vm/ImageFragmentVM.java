@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.blankj.utilcode.utils.ToastUtils;
 
+import ricky.oknet.OkGo;
 import ricky.oknet.lifecycle.INetQueue;
 import ricky.oknet.utils.Error;
 import worldgo.common.viewmodel.aop.anno.Permission;
@@ -70,6 +71,7 @@ public class ImageFragmentVM extends AbsVM<IRefreshView> implements RefreshListV
 
                 getViewOptional().getRefreshView().setTotalPage(totalPage);
                 getViewOptional().getRefreshView().setData(res.results, loadMore);
+
             }
 
             @Override
