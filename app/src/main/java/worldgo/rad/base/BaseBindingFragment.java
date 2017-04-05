@@ -32,7 +32,6 @@ public abstract class BaseBindingFragment<T extends IView, R extends AbstractVie
     //net queue
     public INetQueue mNetQueue;
     protected B mBinding;
-    protected View mView;
     protected VaryViewHelper mVaryViewHelper;
     private boolean isFirstResume = true;
     private boolean isFirstVisible = true;
@@ -42,7 +41,7 @@ public abstract class BaseBindingFragment<T extends IView, R extends AbstractVie
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = super.onCreateView(inflater, container, savedInstanceState);
+        View mView = super.onCreateView(inflater, container, savedInstanceState);
         mBinding = getBinding();
         mNetQueue = new NetQueue();
 

@@ -81,7 +81,7 @@ public class NewsFragment extends BaseBindingFragment<IRefreshView, NewsFragment
                 if(item.images!=null && item.images.size()>0){
 
                     final ImageView iv = helper.getView(R.id.image_view);
-                    CommonUtils.imageLoad(iv, item.images.get(0), ImageView.ScaleType.CENTER_CROP);
+                    CommonUtils.imageLoad(getContext(),iv, item.images.get(0), ImageView.ScaleType.CENTER_CROP);
                 }
 
 

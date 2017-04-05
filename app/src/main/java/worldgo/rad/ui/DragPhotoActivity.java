@@ -1,6 +1,7 @@
 package worldgo.rad.ui;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
@@ -8,9 +9,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.utils.ScreenUtils;
 import com.blankj.utilcode.utils.StringUtils;
 import com.jaeger.library.StatusBarUtil;
 
@@ -21,13 +22,13 @@ import worldgo.common.viewmodel.util.view.DragPhotoView;
 import worldgo.rad.R;
 import worldgo.rad.base.BaseBindingActivity;
 import worldgo.rad.databinding.AcitivtyDragPhotoBinding;
-import worldgo.rad.vm.EmptyVM;
+import worldgo.rad.vm.DragDetailVM;
 
 /**
  * @author ricky.yao on 2017/3/30.
  */
 
-public class DragPhotoActivity extends BaseBindingActivity<IView, EmptyVM, AcitivtyDragPhotoBinding> {
+public class DragPhotoActivity extends BaseBindingActivity<IView, DragDetailVM, AcitivtyDragPhotoBinding> {
     int mOriginLeft;
     int mOriginTop;
     int mOriginHeight;
@@ -60,9 +61,13 @@ public class DragPhotoActivity extends BaseBindingActivity<IView, EmptyVM, Aciti
     @Override
     public void onCreateView(@Nullable Bundle savedInstanceState) {
 
+
+        if (getViewModel().portrait == -1) {
+            getViewModel().portrait = ScreenUtils.isPortrait() ? 1 : 2;
+        }
         StatusBarUtil.setTransparent(this);
 
-        CommonUtils.imageLoad(mBinding.mDragView, getIntent().getStringExtra("url"), ImageView.ScaleType.CENTER_CROP);
+        CommonUtils.imageLoad(this, mBinding.mDragView, getIntent().getStringExtra("url"), ImageView.ScaleType.CENTER_CROP);
 
 
         mBinding.mDragView.setOnTapListener(new DragPhotoView.OnTapListener() {
@@ -120,8 +125,32 @@ public class DragPhotoActivity extends BaseBindingActivity<IView, EmptyVM, Aciti
     }
 
     private void finishWithAnimation() {
-
         final DragPhotoView photoView = mBinding.mDragView;
+
+        int t = ScreenUtils.isPortrait() ? 1 : 2;
+        if (getViewModel().portrait != t) {
+            //进来时和出去时屏幕方向不一致
+            ValueAnimator v = ValueAnimator.ofFloat(1, 0);
+            v.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    photoView.setAlpha((Float) valueAnimator.getAnimatedValue());
+                }
+            });
+            v.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    animation.removeAllListeners();
+                    finish();
+                    overridePendingTransition(0, 0);
+                }
+            });
+            v.setDuration(200);
+            v.start();
+            return;
+        }
+
+
         ValueAnimator translateXAnimator = ValueAnimator.ofFloat(0, mTranslationX);
         translateXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -160,27 +189,12 @@ public class DragPhotoActivity extends BaseBindingActivity<IView, EmptyVM, Aciti
             }
         });
 
-        scaleXAnimator.addListener(new Animator.AnimatorListener() {
+        scaleXAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationStart(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                animator.removeAllListeners();
+            public void onAnimationEnd(Animator animation) {
+                animation.removeAllListeners();
                 finish();
                 overridePendingTransition(0, 0);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
             }
         });
         scaleXAnimator.setDuration(200);

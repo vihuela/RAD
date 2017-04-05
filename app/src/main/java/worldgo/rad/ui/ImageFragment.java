@@ -82,7 +82,7 @@ public class ImageFragment extends BaseBindingFragment<IRefreshView, ImageFragme
 
                 final ImageView iv = helper.getView(R.id.iv);
 
-                CommonUtils.imageLoad(iv, item.url, ImageView.ScaleType.CENTER_CROP);
+                CommonUtils.imageLoad(getActivity(),iv, item.url, ImageView.ScaleType.CENTER_CROP);
 
 //                helper.addOnClickListener(R.id.iv)
             }

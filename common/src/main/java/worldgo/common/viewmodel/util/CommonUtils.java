@@ -48,7 +48,21 @@ public class CommonUtils {
                 .crossFade();
 
     }
+    public static DrawableRequestBuilder getGlideStringBuilder(Context ctx,String url) {
+        return Glide.with(ctx).load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(DEF_HOLDER)
+                .crossFade();
 
+    }
+
+    public static DrawableRequestBuilder getGlideIntegerBuilder(Context ctx,int resId) {
+        return Glide.with(ctx).load(resId)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(DEF_HOLDER)
+                .crossFade();
+
+    }
     /**
      * 图片加载
      */
@@ -70,6 +84,23 @@ public class CommonUtils {
         }
     }
 
+    public static void imageLoad(Context ctx,ImageView imageView, Object url, ImageView.ScaleType ... scaleType) {
+
+        int targetResId = 0;
+        String targetUrl = null;
+
+        if(scaleType!=null && scaleType.length == 1){
+            imageView.setScaleType(scaleType[0]);
+        }
+
+        try { targetResId = Integer.parseInt(url.toString());} catch (Exception ignore) {}
+        try { targetUrl = String.valueOf(url);} catch (Exception ignore) {}
+        if (targetResId != 0) {
+            getGlideIntegerBuilder(ctx,targetResId).into(imageView);
+        } else if (!StringUtils.isEmpty(targetUrl)) {
+            getGlideStringBuilder(ctx,targetUrl).into(imageView);
+        }
+    }
     /**
      * 防止重复点击
      */

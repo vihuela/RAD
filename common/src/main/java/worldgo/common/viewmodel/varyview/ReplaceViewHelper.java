@@ -110,6 +110,7 @@ public class ReplaceViewHelper implements ICaseViewHelper {
                 hideAnimation.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        animation.removeAllListeners();
                         removeFromViewAddToView(toView);
                         fromView.setAlpha(1);
                     }
