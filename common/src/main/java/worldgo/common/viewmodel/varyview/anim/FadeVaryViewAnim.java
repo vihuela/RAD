@@ -18,8 +18,8 @@ public class FadeVaryViewAnim implements VaryViewAnimProvider {
 
     @Override
     public ValueAnimator hideAnimation() {
-        ValueAnimator valueAnimator = ValueAnimator.ofFloat(1, 0).setDuration(200);
-        valueAnimator.setInterpolator(new AccelerateInterpolator());
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(1, 0).setDuration(300);
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
         return valueAnimator;
     }
 }

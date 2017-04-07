@@ -90,7 +90,7 @@ public class ImageFragment extends BaseBindingFragment<IRefreshView, ImageFragme
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                DragPhotoActivity.startPhotoActivity(getActivity(), view, ((ImageListRequest.Res.Item) adapter.getItem(position)).url);
+                DragPhotoActivity.startPhotoActivity(getActivity(), view, ((ImageListRequest.Res.Item) adapter.getItem(position)).url,true);
             }
         });
 

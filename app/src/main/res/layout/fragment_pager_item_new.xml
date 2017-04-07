@@ -9,16 +9,11 @@
     </data>
 
     <LinearLayout
+        android:paddingTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
-
-        <View
-            android:id="@+id/fake_status_bar"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:background="@color/colorPrimary50"/>
 
         <worldgo.common.viewmodel.refresh.RefreshListView
             android:id="@+id/mRefreshLayout"

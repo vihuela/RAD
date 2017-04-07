@@ -5,7 +5,9 @@ import ricky.oknet.retrofit.Net;
 import ricky.oknet.retrofit.anno.CACHE;
 import ricky.oknet.retrofit.anno.GET;
 import ricky.oknet.retrofit.anno.Path;
+import rx.Observable;
 import worldgo.rad.request.entity.ImageListRequest;
+import worldgo.rad.request.entity.NewsDetailRequest;
 import worldgo.rad.request.entity.NewsRequest;
 
 /**
@@ -25,5 +27,8 @@ public interface Api {
 
     @GET("http://news-at.zhihu.com/api/4/news/before/{date}")
     Net<NewsRequest.Res> getNewForDate(@Path("date") String date);
+
+    @GET("http://news-at.zhihu.com/api/4/news/{id}")
+    Net<NewsDetailRequest.Res> getStoryDetail(@Path("id") int id);
 
 }

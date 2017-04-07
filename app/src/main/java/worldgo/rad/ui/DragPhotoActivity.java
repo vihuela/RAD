@@ -41,18 +41,25 @@ public class DragPhotoActivity extends BaseBindingActivity<IView, DragDetailVM, 
     private float mScaleY;
     private float mTranslationX;
     private float mTranslationY;
+    private boolean isAnim;
 
-    public static void startPhotoActivity(Activity context, View imageView, String url) {
+    public static void startPhotoActivity(Activity context, View imageView, String url,boolean isCrop) {
         if (StringUtils.isEmpty(url)) return;
         Intent intent = new Intent(context, DragPhotoActivity.class);
-        int location[] = new int[2];
 
-        imageView.getLocationOnScreen(location);
-        intent.putExtra("left", location[0]);
-        intent.putExtra("top", location[1]);
-        intent.putExtra("height", imageView.getHeight());
-        intent.putExtra("width", imageView.getWidth());
+
+        if(imageView!=null){
+            int location[] = new int[2];
+            imageView.getLocationOnScreen(location);
+            intent.putExtra("left", location[0]);
+            intent.putExtra("top", location[1]);
+            intent.putExtra("height", imageView.getHeight());
+            intent.putExtra("width", imageView.getWidth());
+            intent.putExtra("isAnim", true);
+        }
+
         intent.putExtra("url", url);
+        intent.putExtra("isCrop", isCrop);
 
         context.startActivity(intent);
         context.overridePendingTransition(0, 0);
@@ -67,8 +74,9 @@ public class DragPhotoActivity extends BaseBindingActivity<IView, DragDetailVM, 
         }
         StatusBarUtil.setTransparent(this);
 
-        CommonUtils.imageLoad(this, mBinding.mDragView, getIntent().getStringExtra("url"), ImageView.ScaleType.CENTER_CROP);
+        CommonUtils.imageLoad(this, mBinding.mDragView, getIntent().getStringExtra("url"),getIntent().getBooleanExtra("isCrop",false)? ImageView.ScaleType.CENTER_CROP : ImageView.ScaleType.FIT_CENTER);
 
+        isAnim = getIntent().getBooleanExtra("isAnim",false);
 
         mBinding.mDragView.setOnTapListener(new DragPhotoView.OnTapListener() {
             @Override
@@ -83,52 +91,55 @@ public class DragPhotoActivity extends BaseBindingActivity<IView, DragDetailVM, 
                 performExitAnimation(view, x, y, w, h);
             }
         });
-        mBinding.mDragView.getViewTreeObserver()
-                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        mBinding.mDragView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        if(isAnim){
+            mBinding.mDragView.getViewTreeObserver()
+                    .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            mBinding.mDragView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                        mOriginLeft = getIntent().getIntExtra("left", 0);
-                        mOriginTop = getIntent().getIntExtra("top", 0);
-                        mOriginHeight = getIntent().getIntExtra("height", 0);
-                        mOriginWidth = getIntent().getIntExtra("width", 0);
-                        mOriginCenterX = mOriginLeft + mOriginWidth / 2;
-                        mOriginCenterY = mOriginTop + mOriginHeight / 2;
+                            mOriginLeft = getIntent().getIntExtra("left", 0);
+                            mOriginTop = getIntent().getIntExtra("top", 0);
+                            mOriginHeight = getIntent().getIntExtra("height", 0);
+                            mOriginWidth = getIntent().getIntExtra("width", 0);
+                            mOriginCenterX = mOriginLeft + mOriginWidth / 2;
+                            mOriginCenterY = mOriginTop + mOriginHeight / 2;
 
-                        int[] location = new int[2];
+                            int[] location = new int[2];
 
-                        final DragPhotoView photoView = mBinding.mDragView;
-                        photoView.getLocationOnScreen(location);
+                            final DragPhotoView photoView = mBinding.mDragView;
+                            photoView.getLocationOnScreen(location);
 
-                        mTargetHeight = (float) photoView.getHeight();
-                        mTargetWidth = (float) photoView.getWidth();
-                        mScaleX = (float) mOriginWidth / mTargetWidth;
-                        mScaleY = (float) mOriginHeight / mTargetHeight;
+                            mTargetHeight = (float) photoView.getHeight();
+                            mTargetWidth = (float) photoView.getWidth();
+                            mScaleX = (float) mOriginWidth / mTargetWidth;
+                            mScaleY = (float) mOriginHeight / mTargetHeight;
 
-                        float targetCenterX = location[0] + mTargetWidth / 2;
-                        float targetCenterY = location[1] + mTargetHeight / 2;
+                            float targetCenterX = location[0] + mTargetWidth / 2;
+                            float targetCenterY = location[1] + mTargetHeight / 2;
 
-                        mTranslationX = mOriginCenterX - targetCenterX;
-                        mTranslationY = mOriginCenterY - targetCenterY;
-                        photoView.setTranslationX(mTranslationX);
-                        photoView.setTranslationY(mTranslationY);
+                            mTranslationX = mOriginCenterX - targetCenterX;
+                            mTranslationY = mOriginCenterY - targetCenterY;
+                            photoView.setTranslationX(mTranslationX);
+                            photoView.setTranslationY(mTranslationY);
 
-                        photoView.setScaleX(mScaleX);
-                        photoView.setScaleY(mScaleY);
+                            photoView.setScaleX(mScaleX);
+                            photoView.setScaleY(mScaleY);
 
-                        performEnterAnimation();
+                            performEnterAnimation();
 
-                        mBinding.mDragView.setMinScale(mScaleX);
-                    }
-                });
+                            mBinding.mDragView.setMinScale(mScaleX);
+                        }
+                    });
+        }
+
     }
 
     private void finishWithAnimation() {
         final DragPhotoView photoView = mBinding.mDragView;
 
         int t = ScreenUtils.isPortrait() ? 1 : 2;
-        if (getViewModel().portrait != t) {
+        if (!isAnim || getViewModel().portrait != t) {
             //进来时和出去时屏幕方向不一致
             ValueAnimator v = ValueAnimator.ofFloat(1, 0);
             v.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

@@ -36,8 +36,6 @@ public abstract class BaseBindingActivity<T extends IView, R1 extends AbstractVi
     public INetQueue mNetQueue;
     protected B mBinding;
     protected Context mContext;
-    private TextView title;
-    private ImageView back;
     private VaryViewHelper mVaryViewHelper;
 
     @Override
@@ -96,32 +94,20 @@ public abstract class BaseBindingActivity<T extends IView, R1 extends AbstractVi
         mNetQueue.cancel();
     }
 
-//    @Override
-//    public void setContentView(int layoutId) {
-//        setContentView(View.inflate(this, layoutId, null));
-//    }
-//
-//    @Override
-//    public void setContentView(View view) {
-//        View contain = View.inflate(this,R.layout.activity_base,null);
-//        LinearLayout rootLayout = (LinearLayout) contain.findViewById(R.id.root_layout);
-//        rootLayout.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-//        initToolbar();
-//    }
-
-    private void initToolbar() {
+    protected void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
-            setSupportActionBar(toolbar);
+            setSupportActionBar(toolbar);//不能与inflateMenu同用，写了这句就使用onCreateOptionsMenu、onOptionsItemSelected处理菜单相关
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
         }
         if (getSupportActionBar() != null) {
-            // Enable the Up button
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        back = (ImageView) findViewById(R.id.img_back);
-        title = (TextView) findViewById(R.id.title);
     }
 
     @Override

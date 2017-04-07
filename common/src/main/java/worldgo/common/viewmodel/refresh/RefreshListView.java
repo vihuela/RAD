@@ -175,6 +175,7 @@ public class RefreshListView extends FrameLayout implements BaseRefreshView{
 
     /**
      * 刷新View的类型
+     * @attr ref R.styleable#refreshLayout_rl_refresh_type
      */
     public RefreshListView setViewType(@Type int type) {
         this.mRefreshType = type;

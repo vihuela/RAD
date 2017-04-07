@@ -1,6 +1,8 @@
 package worldgo.common.viewmodel.util;
 
 import android.app.ActivityManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -27,13 +29,15 @@ import rx.Observer;
 import worldgo.common.viewmodel.app.BaseApplication;
 import worldgo.common.viewmodel.util.rx.RxView;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
+
 
 public class CommonUtils {
-    public static final int Local = 0;
-    public static final int Remote = 1;
+    private static final int Local = 0;
+    private static final int Remote = 1;
     private final static ColorDrawable DEF_HOLDER = new ColorDrawable(Color.parseColor("#DCDDE1"));
 
-    public static DrawableRequestBuilder getGlideStringBuilder(String url) {
+    private static DrawableRequestBuilder getGlideStringBuilder(String url) {
         return Glide.with(BaseApplication.getAppContext()).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
@@ -41,14 +45,14 @@ public class CommonUtils {
 
     }
 
-    public static DrawableRequestBuilder getGlideIntegerBuilder(int resId) {
+    private static DrawableRequestBuilder getGlideIntegerBuilder(int resId) {
         return Glide.with(BaseApplication.getAppContext()).load(resId)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
                 .crossFade();
 
     }
-    public static DrawableRequestBuilder getGlideStringBuilder(Context ctx,String url) {
+    private static DrawableRequestBuilder getGlideStringBuilder(Context ctx,String url) {
         return Glide.with(ctx).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
@@ -56,7 +60,7 @@ public class CommonUtils {
 
     }
 
-    public static DrawableRequestBuilder getGlideIntegerBuilder(Context ctx,int resId) {
+    private static DrawableRequestBuilder getGlideIntegerBuilder(Context ctx,int resId) {
         return Glide.with(ctx).load(resId)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
@@ -142,6 +146,15 @@ public class CommonUtils {
         }
 
         return Preconditions.isNotBlank(pN) && pN.equals(cxt.getApplicationContext().getPackageName());
+    }
+
+    /**
+     * 剪辑版
+     */
+    public static void copyTextToClipboard(Context context, CharSequence text) {
+        ClipboardManager manager = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newPlainText("text", text);
+        manager.setPrimaryClip(clipData);
     }
 
     /**

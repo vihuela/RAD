@@ -1,22 +1,15 @@
 package worldgo.rad.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.blankj.utilcode.utils.HandlerUtils;
-import com.blankj.utilcode.utils.ScreenUtils;
-import com.blankj.utilcode.utils.SizeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.jaeger.library.StatusBarUtil;
 
 import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
 import worldgo.common.viewmodel.refresh.RefreshLayout;
@@ -24,16 +17,10 @@ import worldgo.common.viewmodel.refresh.RefreshListView;
 import worldgo.common.viewmodel.refresh.base.BaseRefreshView;
 import worldgo.common.viewmodel.refresh.interfaces.IRefreshView;
 import worldgo.common.viewmodel.util.CommonUtils;
-import worldgo.common.viewmodel.util.decoration.CommonItemDecoration;
-import worldgo.common.viewmodel.util.decoration.GridItemDecoration;
 import worldgo.rad.R;
 import worldgo.rad.base.BaseBindingFragment;
-import worldgo.rad.databinding.FragmentPagerItemBinding;
 import worldgo.rad.databinding.FragmentPagerItemNewBinding;
-import worldgo.rad.request.Api;
-import worldgo.rad.request.entity.ImageListRequest;
 import worldgo.rad.request.entity.NewsRequest;
-import worldgo.rad.vm.ImageFragmentVM;
 import worldgo.rad.vm.NewsFragmentVM;
 
 /**
@@ -69,29 +56,34 @@ public class NewsFragment extends BaseBindingFragment<IRefreshView, NewsFragment
 
     @Override
     public void onCreateView(@Nullable Bundle savedInstanceState) {
+
+        StatusBarUtil.setTranslucentForCoordinatorLayout(getActivity(),StatusBarUtil.DEFAULT_STATUS_BAR_ALPHA);
         mTitle = getArguments().getString("title");
 
         mBinding.mRefreshLayout.getRecyclerView().setLayoutManager(new LinearLayoutManager(getActivity()));
-        BaseQuickAdapter<NewsRequest.Res.StoriesBean, BaseViewHolder> mAdapter = new BaseQuickAdapter<NewsRequest.Res.StoriesBean  , BaseViewHolder>(R.layout.item_nomal_story) {
+        final BaseQuickAdapter<NewsRequest.Res.StoriesBean, BaseViewHolder> mAdapter = new BaseQuickAdapter<NewsRequest.Res.StoriesBean, BaseViewHolder>(R.layout.item_nomal_story) {
 
 
             @Override
-            protected void convert(BaseViewHolder helper, NewsRequest.Res.StoriesBean  item) {
+            protected void convert(BaseViewHolder helper, NewsRequest.Res.StoriesBean item) {
 
-                if(item.images!=null && item.images.size()>0){
+                if (item.images != null && item.images.size() > 0) {
 
                     final ImageView iv = helper.getView(R.id.image_view);
-                    CommonUtils.imageLoad(getContext(),iv, item.images.get(0), ImageView.ScaleType.CENTER_CROP);
+                    CommonUtils.imageLoad(getContext(), iv, item.images.get(0), ImageView.ScaleType.CENTER_CROP);
                 }
 
 
-                helper.setText(R.id.tv_title,item.title);
+                helper.setText(R.id.tv_title, item.title);
 
             }
         };
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
+                intent.putExtra("id", mAdapter.getItem(position).id);
+                startActivity(intent);
             }
         });
 
@@ -109,7 +101,7 @@ public class NewsFragment extends BaseBindingFragment<IRefreshView, NewsFragment
 
                     @Override
                     public void onLoadMore(int targetPage) {
-                        getViewModel().getNewForDate(targetPage,mNetQueue);
+                        getViewModel().getNewForDate(targetPage, mNetQueue);
                     }
                 })
                 .setAdapter(mAdapter);

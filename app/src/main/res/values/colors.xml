@@ -8,4 +8,6 @@
     <color name="bg">#FAFAFA</color>
     <color name="translucent">#00000000</color>
     <color name="colorPrimary50">#70FA7C20</color>
+    <color name="colorPrimary95">#95FA7C20</color>
+    <color name="textColorPrimary">#616161</color>
 </resources>
