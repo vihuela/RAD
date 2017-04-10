@@ -6,6 +6,7 @@
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/bg"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.AppBarLayout
@@ -23,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
-                app:contentScrim="@color/colorPrimary95"
+                app:contentScrim="@color/colorPrimary"
                 app:expandedTitleTextAppearance="@style/ExpandedAppBar"
                 app:layout_scrollFlags="scroll|enterAlwaysCollapsed|enterAlways">
 

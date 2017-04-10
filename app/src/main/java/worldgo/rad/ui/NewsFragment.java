@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.animation.AlphaInAnimation;
 import com.jaeger.library.StatusBarUtil;
 
 import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
@@ -17,6 +18,7 @@ import worldgo.common.viewmodel.refresh.RefreshListView;
 import worldgo.common.viewmodel.refresh.base.BaseRefreshView;
 import worldgo.common.viewmodel.refresh.interfaces.IRefreshView;
 import worldgo.common.viewmodel.util.CommonUtils;
+import worldgo.common.viewmodel.util.view.ParallaxRecyclerView;
 import worldgo.rad.R;
 import worldgo.rad.base.BaseBindingFragment;
 import worldgo.rad.databinding.FragmentPagerItemNewBinding;
@@ -59,8 +61,9 @@ public class NewsFragment extends BaseBindingFragment<IRefreshView, NewsFragment
 
         StatusBarUtil.setTranslucentForCoordinatorLayout(getActivity(),StatusBarUtil.DEFAULT_STATUS_BAR_ALPHA);
         mTitle = getArguments().getString("title");
-
-        mBinding.mRefreshLayout.getRecyclerView().setLayoutManager(new LinearLayoutManager(getActivity()));
+        //recyclerView折叠效果，下拉加载出现黑影，可替换下面
+        ParallaxRecyclerView.applyParallaxRecyclerViewForLinearLayout(mBinding.mRefreshLayout.getRecyclerView());
+//        mBinding.mRefreshLayout.getRecyclerView().setLayoutManager(new LinearLayoutManager(getActivity()));
         final BaseQuickAdapter<NewsRequest.Res.StoriesBean, BaseViewHolder> mAdapter = new BaseQuickAdapter<NewsRequest.Res.StoriesBean, BaseViewHolder>(R.layout.item_nomal_story) {
 
 
@@ -70,7 +73,8 @@ public class NewsFragment extends BaseBindingFragment<IRefreshView, NewsFragment
                 if (item.images != null && item.images.size() > 0) {
 
                     final ImageView iv = helper.getView(R.id.image_view);
-                    CommonUtils.imageLoad(getContext(), iv, item.images.get(0), ImageView.ScaleType.CENTER_CROP);
+                    iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    CommonUtils.imageLoad(iv, item.images.get(0) );
                 }
 
 

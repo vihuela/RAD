@@ -10,6 +10,7 @@ import com.squareup.leakcanary.RefWatcher;
 
 import java.util.logging.Level;
 
+import cn.bingoogolapple.swipebacklayout.BGASwipeBackManager;
 import ricky.oknet.OkGo;
 import worldgo.common.viewmodel.app.BaseApplication;
 
@@ -36,13 +37,15 @@ public class RadApp extends BaseApplication {
 
         if (isDebug()) {
             //chrome debug [chrome://inspect/#devices]
-//            Stetho.initialize(
-//                    Stetho.newInitializerBuilder(this)
-//                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-//                            .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-//                            .build());
-//            OkGo.getInstance().getOkHttpClientBuilder().addNetworkInterceptor(new StethoInterceptor());
+            Stetho.initialize(
+                    Stetho.newInitializerBuilder(this)
+                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                            .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                            .build());
+            OkGo.getInstance().getOkHttpClientBuilder().addNetworkInterceptor(new StethoInterceptor());
         }
+        //swipeBack
+        BGASwipeBackManager.getInstance().init(this);
     }
 
     @Override

@@ -74,7 +74,8 @@ public class DragPhotoActivity extends BaseBindingActivity<IView, DragDetailVM, 
         }
         StatusBarUtil.setTransparent(this);
 
-        CommonUtils.imageLoad(this, mBinding.mDragView, getIntent().getStringExtra("url"),getIntent().getBooleanExtra("isCrop",false)? ImageView.ScaleType.CENTER_CROP : ImageView.ScaleType.FIT_CENTER);
+        mBinding.mDragView.setScaleType(getIntent().getBooleanExtra("isCrop",false)? ImageView.ScaleType.CENTER_CROP : ImageView.ScaleType.FIT_CENTER);
+        CommonUtils.imageLoad( mBinding.mDragView, getIntent().getStringExtra("url"));
 
         isAnim = getIntent().getBooleanExtra("isAnim",false);
 

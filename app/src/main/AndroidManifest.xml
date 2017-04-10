@@ -29,6 +29,7 @@
             android:theme="@style/translucent" />
         <activity
             android:label=""
+            android:theme="@style/translucent"
             android:name=".ui.NewsDetailActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" />
 

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.jaeger.library.StatusBarUtil;
 
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import worldgo.common.viewmodel.framework.IView;
 import worldgo.common.viewmodel.framework.binding.ViewModelBindingConfig;
 import worldgo.common.viewmodel.util.CommonUtils;
@@ -38,6 +39,11 @@ public class NewsDetailActivity extends BaseBindingActivity<IView, NewDetailVM, 
         showLoading();
         getViewModel().getNesDetail(mNetQueue);
 
+    }
+
+    @Override
+    public boolean isSupportSwipeBack() {
+        return true;
     }
 
     @Override
@@ -90,7 +96,7 @@ public class NewsDetailActivity extends BaseBindingActivity<IView, NewDetailVM, 
         //title
         mBinding.toolbarLayout.setTitle(data.title);
         //image
-        CommonUtils.imageLoad(this, mBinding.imageView, data.image, ImageView.ScaleType.CENTER_CROP);
+        CommonUtils.imageLoad( mBinding.imageView, data.image, new BlurTransformation(this, 25));
         //content
         if (data.body == null) {
             mBinding.webView.loadUrl(data.share_url);

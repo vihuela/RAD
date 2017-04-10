@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import worldgo.common.viewmodel.framework.AbstractViewModel;
+import worldgo.common.viewmodel.framework.support.ViewModelStatePagerAdapter;
 import worldgo.rad.R;
 import worldgo.rad.databinding.ActivityMainBinding;
 import worldgo.rad.ui.ImageFragment;
@@ -59,7 +60,7 @@ public class MainActivityVM extends AbstractViewModel<MainActivity> {
         mFragments.get().add(ImageFragment.getInstance(mTitles[0]));
         mFragments.get().add(NewsFragment.getInstance(mTitles[1]));
 
-        binding.mViewPager.setAdapter(new FragmentPagerAdapter(view.getSupportFragmentManager()) {
+        binding.mViewPager.setAdapter(new ViewModelStatePagerAdapter(view.getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
                 return mFragments.get().get(position);

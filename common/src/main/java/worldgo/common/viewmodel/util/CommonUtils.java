@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.IntDef;
@@ -14,6 +15,7 @@ import com.blankj.utilcode.utils.SPUtils;
 import com.blankj.utilcode.utils.StringUtils;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.lang.annotation.Retention;
@@ -37,7 +39,7 @@ public class CommonUtils {
     private static final int Remote = 1;
     private final static ColorDrawable DEF_HOLDER = new ColorDrawable(Color.parseColor("#DCDDE1"));
 
-    private static DrawableRequestBuilder getGlideStringBuilder(String url) {
+    public static DrawableRequestBuilder getGlideStringBuilder(String url) {
         return Glide.with(BaseApplication.getAppContext()).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
@@ -45,14 +47,14 @@ public class CommonUtils {
 
     }
 
-    private static DrawableRequestBuilder getGlideIntegerBuilder(int resId) {
+    public static DrawableRequestBuilder getGlideIntegerBuilder(int resId) {
         return Glide.with(BaseApplication.getAppContext()).load(resId)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
                 .crossFade();
 
     }
-    private static DrawableRequestBuilder getGlideStringBuilder(Context ctx,String url) {
+    public static DrawableRequestBuilder getGlideStringBuilder(Context ctx,String url) {
         return Glide.with(ctx).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
@@ -60,49 +62,39 @@ public class CommonUtils {
 
     }
 
-    private static DrawableRequestBuilder getGlideIntegerBuilder(Context ctx,int resId) {
+    public static DrawableRequestBuilder getGlideIntegerBuilder(Context ctx,int resId) {
         return Glide.with(ctx).load(resId)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(DEF_HOLDER)
                 .crossFade();
 
     }
+
     /**
-     * 图片加载
+     * 图片价值
+     * @param imageView
+     * @param url 可以是网络url，也可以是本地资源id
+     * @param transformation https://github.com/wasabeef/glide-transformations
      */
-    public static void imageLoad(ImageView imageView, Object url, ImageView.ScaleType ... scaleType) {
+    public static void imageLoad(ImageView imageView, Object url, Transformation ...transformation) {
 
-        int targetResId = 0;
-        String targetUrl = null;
-
-        if(scaleType!=null && scaleType.length == 1){
-            imageView.setScaleType(scaleType[0]);
-        }
-
-        try { targetResId = Integer.parseInt(url.toString());} catch (Exception ignore) {}
-        try { targetUrl = String.valueOf(url);} catch (Exception ignore) {}
-        if (targetResId != 0) {
-            getGlideIntegerBuilder(targetResId).into(imageView);
-        } else if (!StringUtils.isEmpty(targetUrl)) {
-            getGlideStringBuilder(targetUrl).into(imageView);
-        }
+        imageLoad(BaseApplication.getAppContext().getCurActivity(),imageView, url,transformation);
     }
 
-    public static void imageLoad(Context ctx,ImageView imageView, Object url, ImageView.ScaleType ... scaleType) {
+    @SuppressWarnings("all")
+    private static void imageLoad(Context ctx, ImageView imageView, Object url, Transformation ...transformation) {
 
         int targetResId = 0;
         String targetUrl = null;
 
-        if(scaleType!=null && scaleType.length == 1){
-            imageView.setScaleType(scaleType[0]);
-        }
-
         try { targetResId = Integer.parseInt(url.toString());} catch (Exception ignore) {}
         try { targetUrl = String.valueOf(url);} catch (Exception ignore) {}
         if (targetResId != 0) {
-            getGlideIntegerBuilder(ctx,targetResId).into(imageView);
+            if(transformation.length>0){  getGlideIntegerBuilder(ctx,targetResId).bitmapTransform(transformation).into(imageView); }
+            else{  getGlideIntegerBuilder(ctx,targetResId).into(imageView);  }
         } else if (!StringUtils.isEmpty(targetUrl)) {
-            getGlideStringBuilder(ctx,targetUrl).into(imageView);
+            if(transformation.length>0){  getGlideStringBuilder(ctx,targetUrl).bitmapTransform(transformation).into(imageView); }
+            else{  getGlideStringBuilder(ctx,targetUrl).into(imageView);  }
         }
     }
     /**
