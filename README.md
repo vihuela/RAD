@@ -27,6 +27,7 @@ RAD包含了现今热门的技术之外（OKHttp、Rx、Aop、MVP），不赘述
 
 - 欢迎建议、留言
 - [点击查看运行效果](http://v.youku.com/v_show/id_XMjY5OTY5MjM2OA==?spm=a2h3j.8428770.3416059.1)
+- [简书额外描述](http://www.jianshu.com/p/9b7c73d278c3 "简书地址")
 
 ### License
  
